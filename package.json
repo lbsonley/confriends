@@ -1,0 +1,41 @@
+{
+	"name": "confriends",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"babel-polyfill": "6.26.0",
+		"body-parser": "1.18.2",
+		"bows": "1.7.0",
+		"cors": "2.8.4",
+		"debug": "3.1.0",
+		"dotenv": "4.0.0",
+		"express": "4.16.2",
+		"express-jwt": "^5.3.0",
+		"jwks-rsa": "^1.2.1",
+		"mongodb": "2.2",
+		"source-map-support": "0.5.0"
+	},
+	"scripts": {
+		"start": "cd client && npm run start",
+		"start:server": "DEBUG=* nodemon --watch dist dist/server.js",
+		"compile:server": "babel server --watch --presets es2015-node --out-dir dist --source-maps",
+		"start:db": "mongod --dbpath db",
+		"lint": "npx eslint --fix --config ./.eslintrc client/src/*.js client/src/**/*.js server/*.js"
+	},
+	"devDependencies": {
+		"babel": "6.23.0",
+		"babel-cli": "6.26.0",
+		"babel-eslint": "8.0.3",
+		"babel-preset-es2015-node": "6.1.1",
+		"eslint": "4.9.0",
+		"eslint-config-airbnb": "^16.1.0",
+		"eslint-config-prettier": "2.9.0",
+		"eslint-plugin-import": "2.7.0",
+		"eslint-plugin-jsx-a11y": "6.0.2",
+		"eslint-plugin-prettier": "2.3.1",
+		"eslint-plugin-react": "7.4.0",
+		"markdown-to-json": "0.5.1",
+		"nodemon": "1.12.1",
+		"prettier": "1.9.1"
+	}
+}

@@ -1,0 +1,90 @@
+html {
+  line-height: 1.5;
+  font-size: 120%;
+  font-family: sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 16px auto 16px;
+  grid-template-rows: 80px auto 60px;
+}
+
+@media screen and (min-width: 481px) {
+  .app-grid {
+    grid-template-columns: 40px auto 40px;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .app-grid {
+    grid-template-rows: 120px auto 100px;
+  }
+}
+
+@media screen and (min-width: 1025px) {
+  .app-grid {
+    grid-template-columns: 120px auto 120px;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .app-grid {
+    grid-template-columns: 320px auto 320px;
+    grid-template-rows: 160px auto 120px;
+  }
+}
+
+.app-header {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  grid-row-start: 1;
+  grid-row-end: 1;
+
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+@media screen and (min-width: 481px) {
+  .app-header{
+    padding: 40px 60px;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .app-header{
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+}
+
+.app-title {
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.nav-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+}
+
+.nav-list__item {
+  padding: 0 8px;
+}
+
+a {
+  text-decoration: none;
+  color: darkslategray;
+}

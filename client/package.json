@@ -1,0 +1,41 @@
+{
+	"name": "confriends",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"auth0-js": "8.11.3",
+		"babel-polyfill": "6.26.0",
+		"bows": "1.7.0",
+		"cors": "^2.8.4",
+		"dotenv": "4.0.0",
+		"express-jwt": "^5.3.0",
+		"history": "4.7.2",
+		"jwks-rsa": "^1.2.1",
+		"jwt-decode": "^2.2.0",
+		"prop-types": "^15.6.0",
+		"react": "16.1.1",
+		"react-dom": "16.1.1",
+		"react-router-dom": "4.2.2",
+		"react-scripts": "1.0.17",
+		"source-map-support": "0.5.0",
+		"whatwg-fetch": "2.0.3"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"start:server": "nodemon --watch dist dist/server.js",
+		"compile:server": "babel server --watch --presets es2015-node --out-dir dist --source-maps",
+		"build": "react-scripts build",
+		"test": "react-scripts test --env=jsdom",
+		"eject": "react-scripts eject"
+	},
+	"proxy": "http://localhost:3001/",
+	"devDependencies": {
+		"babel": "6.23.0",
+		"babel-cli": "6.26.0",
+		"babel-preset-es2015-node": "6.1.1",
+		"body-parser": "1.18.2",
+		"express": "4.16.2",
+		"markdown-to-json": "0.5.1",
+		"nodemon": "1.12.1"
+	}
+}
