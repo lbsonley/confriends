@@ -9,13 +9,14 @@ import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Media from 'react-media';
 
-import Home from './Containers/Home';
 import ListContainer from './Containers/ListContainer';
 import ConferenceDetailsContainer from './Containers/ConferenceDetailsContainer';
 import Profile from './Components/Profile';
 import Callback from './Components/Callback';
-import Header from './Components/Header';
 import Dummy from './Components/Dummy';
+import Header from './Components/Header';
+import NavMain from './Components/NavMain';
+import Button from './Components/Button';
 
 import Auth from './Auth/Auth';
 import history from './utils/history';
@@ -43,29 +44,15 @@ class App extends Component {
     return (
       <Router history={history}>
         <div className="app-grid">
-          {/* logic to determine whether or not to display the dashboard on the homepage */}
-          <Media query="(min-width: 481px)">
-            {matches =>
-              matches ? (
-                <Switch>
-                  <Redirect from="/" exact to="/dummy" />
-                  <Route
-                    path="/"
-                    render={() => <Home isAuthenticated={auth.isAuthenticated} onLoginClick={this.login} onLogoutClick={this.logout} /> }
-                  />
-                </Switch>
-              ) : (
-                <Switch>
-                  <Route
-                    exact
-                    path="/"
-                    render={() => <Home isAuthenticated={auth.isAuthenticated} onLoginClick={this.login} onLogoutClick={this.logout} /> }
-                  />
-                  <Redirect from="/dummy" exact to="/" />
-                </Switch>
-              )
-            }
-          </Media>
+          <Header />
+
+          <div className="app-controls">
+            {auth.isAuthenticated() ? (
+              <Button onClick={this.logout}>Log out</Button>
+            ) : (
+              <Button onClick={this.login}>Log in</Button>
+            )}
+          </div>
 
           <Route
             path="/login"
@@ -74,6 +61,31 @@ class App extends Component {
               return <Callback {...props} />;
             }}
           />
+
+          {/* logic to determine whether or not to display the dashboard on the homepage */}
+          <Media query="(min-width: 481px)">
+            {matches =>
+              matches ? (
+                <Switch>
+                  <Redirect from="/" exact to="/dummy" />
+                  <Route
+                    path="/"
+                    render={() => (
+                      <NavMain isAuthenticated={auth.isAuthenticated} />
+                    )}
+                  />
+                </Switch>
+              ) : (
+                <Route
+                  exact
+                  path="/"
+                  render={() => (
+                    <NavMain isAuthenticated={auth.isAuthenticated} />
+                  )}
+                />
+              )
+            }
+          </Media>
 
           <section className="app-content">
             <Route exact path="/dummy" component={Dummy} />
@@ -89,7 +101,11 @@ class App extends Component {
               exact
               path="/team-building"
               render={props => (
-                <ListContainer auth={auth} listName="team-building" {...props} />
+                <ListContainer
+                  auth={auth}
+                  listName="team-building"
+                  {...props}
+                />
               )}
             />
             <Route
