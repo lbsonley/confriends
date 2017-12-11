@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import bows from 'bows';
 import 'whatwg-fetch';
 
-import AttendeeList from '../Components/AttendeeList';
-import Button from '../Components/Button';
+import AttendeeList from '../Components/AttendeeList/AttendeeList';
+import Button from '../Components/Button/Button';
 
 export default class ConferenceDetailsContainer extends Component {
   constructor() {
@@ -72,7 +72,7 @@ export default class ConferenceDetailsContainer extends Component {
     return (
       <div>
         {this.state.event.image && <img src={this.state.event.image} alt="" />}
-        <h1>{this.state.event.name}</h1>
+        <h3 className="app-content__header">{this.state.event.name}</h3>
         <p>{this.state.event.location.city}</p>
         <p>{this.state.event.location.country}</p>
         {this.props.auth.isAuthenticated() && (

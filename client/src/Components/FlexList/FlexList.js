@@ -48,11 +48,15 @@ const VisualListItem = props => {
             </div>
           )}
           <div className={`${props.optionalClass}__content`}>
-            <h3>{props.item.name}</h3>
+            <h3 className={`${props.optionalClass}__header`}>
+              {props.item.name}
+            </h3>
             <p>
-              {props.item.location.city}, {props.item.location.country}
+              <span>
+                {props.item.location.city}, {props.item.location.country}
+              </span>
+              <span>{formatDate(props.item.date)}</span>
             </p>
-            <p>{formatDate(props.item.date)}</p>
           </div>
         </div>
       </Link>
@@ -76,7 +80,7 @@ VisualListItem.propTypes = {
 };
 
 VisualListItem.defaultProps = {
-  optionalClass: 'conference-teaser',
+  optionalClass: 'event-teaser',
 };
 
 const FlexList = ({ list, listName }) => {
@@ -85,7 +89,7 @@ const FlexList = ({ list, listName }) => {
       key={item._id} // eslint-disable-line no-underscore-dangle
       item={item}
       listName={listName}
-      optionalClass="conference-teaser"
+      optionalClass="event-teaser"
     />
   ));
 

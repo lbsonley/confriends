@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import bows from 'bows';
 import 'whatwg-fetch';
 
-import FlexList from '../Components/FlexList';
+import FlexList from '../Components/FlexList/FlexList';
 
 export default class ListContainer extends Component {
   constructor(props) {

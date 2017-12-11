@@ -11,12 +11,11 @@ import Media from 'react-media';
 
 import ListContainer from './Containers/ListContainer';
 import ConferenceDetailsContainer from './Containers/ConferenceDetailsContainer';
-import Profile from './Components/Profile';
-import Callback from './Components/Callback';
+import Profile from './Components/Profile/Profile';
+import Callback from './Auth/Callback';
 import Dummy from './Components/Dummy';
-import Header from './Components/Header';
-import NavMain from './Components/NavMain';
-import Button from './Components/Button';
+import Header from './Components/Header/Header';
+import NavMain from './Components/NavMain/NavMain';
 
 import Auth from './Auth/Auth';
 import history from './utils/history';
@@ -44,15 +43,11 @@ class App extends Component {
     return (
       <Router history={history}>
         <div className="app-grid">
-          <Header />
-
-          <div className="app-controls">
-            {auth.isAuthenticated() ? (
-              <Button onClick={this.logout}>Log out</Button>
-            ) : (
-              <Button onClick={this.login}>Log in</Button>
-            )}
-          </div>
+          <Header
+            isAuthenticated={auth.isAuthenticated}
+            onLoginClick={this.login}
+            onLogoutClick={this.logout}
+          />
 
           <Route
             path="/login"
