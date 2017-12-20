@@ -42,6 +42,49 @@ const authCheck = jwt({
   algorithms: ['RS256'],
 });
 
+// ** Create API **
+
+/**
+ * endpoint for updating a record
+ */
+app.put('/api/:collectionName/:id', (req, res) => {
+  let issueId;
+
+  // convert the id string to a MongoDB ObjectId
+  try {
+    issueId = ObjectId(req.params.id);
+  } catch (error) {
+    res.status(422).json({ message: `Invalid issue ID format: ${error}` });
+    return;
+  }
+
+  db.collection(req.params.collectionName).update(
+    { _id: issueId },
+    {
+      $push: {
+        attendees: { name: req.body.name, id: req.body.id },
+      },
+    },
+    () => {
+      db
+        .collection(req.params.collectionName)
+        .find({ _id: issueId })
+        .limit(1)
+        .next()
+        .then(savedEvent => {
+          console.log(savedEvent);
+          res.json(savedEvent);
+        })
+        .catch(err => {
+          console.log('error', err);
+          res.status.json({ message: `Error: ${err}` });
+        });
+    }
+  );
+});
+
+// ** Read API **
+
 /**
  * endpoint for event detail page
  */
@@ -66,6 +109,9 @@ app.get('/api/:collectionName/:id', (req, res) => {
     });
 });
 
+/**
+ * endpoint for a list of events
+ */
 app.get('/api/:collectionName', (req, res) => {
   db
     .collection(req.params.collectionName)

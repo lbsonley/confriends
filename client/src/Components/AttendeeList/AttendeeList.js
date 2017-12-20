@@ -11,7 +11,7 @@ const AttendeeList = props => {
   };
 
   this.createListItem = attendee => (
-    <Attendee key={attendee.userId} name={attendee.userName} />
+    <Attendee key={attendee.id} name={attendee.name} />
   );
 
   return <ul style={listStyle}>{props.attendees.map(this.createListItem)}</ul>;
