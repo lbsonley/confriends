@@ -5,7 +5,7 @@ import Media from 'react-media';
 
 import './NavMain.css';
 
-const NavMain = ({ isAuthenticated }) => (
+const NavMain = () => (
   <nav className="app-nav">
     <ul className="nav-list">
       <Media
@@ -28,19 +28,8 @@ const NavMain = ({ isAuthenticated }) => (
           Team Building
         </NavLink>
       </li>
-      {isAuthenticated() && (
-        <li className="nav-list__item">
-          <NavLink activeClassName="active" to="/profile">
-            Profile
-          </NavLink>
-        </li>
-      )}
     </ul>
   </nav>
 );
-
-NavMain.propTypes = {
-  isAuthenticated: PropTypes.func.isRequired,
-};
 
 export default NavMain;
