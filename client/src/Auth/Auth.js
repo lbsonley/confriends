@@ -25,6 +25,7 @@ export default class Auth {
     this.handleAuthentication = this.handleAuthentication.bind(this);
     this.setSession = this.setSession.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
+    this.setupUserManagementAPI = this.setupUserManagementAPI.bind(this);
   }
   logger = bows('Auth');
 
@@ -60,13 +61,18 @@ export default class Auth {
 
   getProfile(cb) {
     const accessToken = this.getAccessToken();
+    const idToken = this.getIdToken();
+    const auth0Manage = this.setupUserManagementAPI(idToken);
+
     this.userProfile = null;
     if (accessToken) {
       this.auth0.client.userInfo(accessToken, (err, profile) => {
         if (profile) {
-          this.userProfile = profile;
+          auth0Manage.getUser(profile.sub, (error, fullProfile) => {
+            this.userProfile = fullProfile;
+            cb(error, fullProfile);
+          });
         }
-        cb(err, profile);
       });
     }
   }
@@ -97,6 +103,13 @@ export default class Auth {
     if (!this.isLoggedIn()) {
       replace({ pathname: '/' });
     }
+  }
+
+  setupUserManagementAPI(idToken) {
+    return new auth0.Management({
+      domain: AUTH_CONFIG.domain,
+      token: idToken,
+    });
   }
 
   handleAuthentication() {
