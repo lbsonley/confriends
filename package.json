@@ -17,7 +17,7 @@
 	},
 	"scripts": {
 		"start": "cd client && npm run start",
-		"start:server": "DEBUG=* nodemon --watch dist dist/server.js",
+		"start:server": "DEBUG=expressServer nodemon --watch dist dist/server.js",
 		"compile:server": "babel server --watch --presets es2015-node --out-dir dist --source-maps",
 		"start:db": "mongod --dbpath db",
 		"lint": "npx eslint --fix --config ./.eslintrc client/src/*.js client/src/**/*.js server/*.js"

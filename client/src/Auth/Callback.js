@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import loading from '../img/kiev.jpg';
+import loading from '../Assets/media/img/kiev.jpg';
 
 const Callback = () => {
   const style = {

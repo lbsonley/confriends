@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import bows from 'bows';
 import 'whatwg-fetch';
 
-import AttendeeList from '../Components/AttendeeList/AttendeeList';
-import Button from '../Components/Button/Button';
+import AttendeeList from '../../Components/AttendeeList/AttendeeList';
+import Button from '../../Components/Button/Button';
 
-import logic from '../utils/logicHelpers';
+import logic from '../../Assets/js/utils/logicHelpers';
 
 export default class ConferenceDetailsContainer extends Component {
   constructor() {

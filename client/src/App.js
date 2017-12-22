@@ -9,8 +9,8 @@ import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Media from 'react-media';
 
-import ListContainer from './Containers/ListContainer';
-import ConferenceDetailsContainer from './Containers/ConferenceDetailsContainer';
+import ListContainer from './Containers/ListContainer/ListContainer';
+import ConferenceDetailsContainer from './Containers/ConferenceDetailsContainer/ConferenceDetailsContainer';
 import Profile from './Components/Profile/Profile';
 import Callback from './Auth/Callback';
 import Dummy from './Components/Dummy';
@@ -18,8 +18,9 @@ import Header from './Components/Header/Header';
 import NavMain from './Components/NavMain/NavMain';
 
 import Auth from './Auth/Auth';
-import history from './utils/history';
+import history from './Assets/js/utils/history';
 
+import './Assets/css/fonts.css';
 import './App.css';
 
 const auth = new Auth();

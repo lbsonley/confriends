@@ -8,7 +8,7 @@ import decode from 'jwt-decode';
 import auth0 from 'auth0-js';
 
 import bows from 'bows';
-import history from '../utils/history';
+import history from '../Assets/js/utils/history';
 import AUTH_CONFIG from './auth0.config';
 
 export default class Auth {

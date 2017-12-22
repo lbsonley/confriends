@@ -45,7 +45,7 @@ const authCheck = jwt({
 // ** Create API **
 
 /**
- * endpoint for updating a record
+ * updating a record
  */
 app.put('/api/:collectionName/:id', (req, res) => {
   let issueId;
@@ -72,11 +72,11 @@ app.put('/api/:collectionName/:id', (req, res) => {
         .limit(1)
         .next()
         .then(savedEvent => {
-          console.log(savedEvent);
+          logger(savedEvent);
           res.json(savedEvent);
         })
         .catch(err => {
-          console.log('error', err);
+          logger('error', err);
           res.status.json({ message: `Error: ${err}` });
         });
     }
