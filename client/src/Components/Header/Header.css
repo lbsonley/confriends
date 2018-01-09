@@ -1,10 +1,10 @@
 .app-header {
-  grid-column-start: right-edge;
+  /* grid-column-start: right-edge;
   grid-column-end: left-edge;
   grid-row-start: top-edge;
-  grid-row-end: header-row-end;
+  grid-row-end: header-row-end; */
 
-  padding: 0 8px;
+  /* padding: 0 8px; */
 
   display: flex;
   flex-flow: column nowrap;
@@ -24,15 +24,15 @@
 }
 
 .app-controls {
-  grid-column-start: main-column-start;
+  /* grid-column-start: main-column-start;
   grid-column-end: main-column-end;
   grid-row-start: header-row-start;
-  grid-row-end: header-row-end;
+  grid-row-end: header-row-end; */
 }
 
 @media screen and (min-width: 481px) {
   .app-controls {
-    grid-column-start: sidebar-column-end;
-    grid-column-end: main-content-column-end;
+    /* grid-column-start: sidebar-column-end;
+    grid-column-end: main-content-column-end; */
   }
 }

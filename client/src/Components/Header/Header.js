@@ -1,5 +1,5 @@
 // react base
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 // react extensions
@@ -15,6 +15,7 @@ import MenuItem from 'material-ui/MenuItem';
 // material ui icons
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 
 // my components
 import Button from '../Button/Button';
@@ -48,39 +49,86 @@ const LoggedIn = ({ onLogoutClick }) => (
 );
 LoggedIn.muiName = 'IconMenu';
 
-const Header = ({ isAuthenticated, onLoginClick, onLogoutClick }) => (
-  <header className="app-header">
-    <AppBar
-      title="Confriends"
-      iconElementLeft={
-        <IconButton>
-          <NavigationClose />
-        </IconButton>
-      }
-      iconElementRight={
-        isAuthenticated() ? (
-          <LoggedIn onLogoutClick={onLogoutClick} />
-        ) : (
-          <Login onLoginClick={onLoginClick} />
-        )
-      }
-    />
-    {/* <section>
-      <h1 className="app-title">
-        <Link exact="true" to="/" href="/">
-          Confriends
-        </Link>
-      </h1>
-      <div className="app-controls">
-        {isAuthenticated() ? (
-          <Button onClick={onLogoutClick}>Log out</Button>
-        ) : (
-          <Button onClick={onLoginClick}>Log in</Button>
-        )}
-      </div>
-    </section> */}
-  </header>
-);
+class Header extends Component {
+  constructor() {
+    super();
+    this.state = { navIsExpanded: false };
+    this.toggleMenu = this.toggleMenu.bind(this);
+  }
+
+  toggleMenu() {
+    this.setState({ navIsExpanded: !this.state.navIsExpanded });
+  }
+
+  render() {
+    const { isAuthenticated, onLoginClick, onLogoutClick } = this.props;
+
+    return (
+      <header className="app-header">
+        <AppBar
+          title="Confriends"
+          iconElementLeft={
+            // <IconButton
+            // >
+            //   {this.state.navIsExpanded ? <NavigationClose /> : <MenuIcon />}
+            // </IconButton>
+            <IconMenu
+              iconStyle={{ color: 'rgb(48, 48, 48)' }}
+              iconButtonElement={
+                <IconButton>
+                  {this.state.navIsExpanded ? (
+                    <NavigationClose />
+                  ) : (
+                    <MenuIcon />
+                  )}
+                </IconButton>
+              }
+              open={this.state.navIsExpanded}
+              onClick={this.toggleMenu}
+              onItemClick={this.toggleMenu}
+              targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+            >
+              <MenuItem
+                primaryText="Dashboard"
+                containerElement={<Link to="/dummy" />}
+              />
+              <MenuItem
+                primaryText="Conferences"
+                containerElement={<Link to="/conferences" />}
+              />
+              <MenuItem
+                primaryText="Team Building"
+                containerElement={<Link to="/team-building" />}
+              />
+            </IconMenu>
+          }
+          iconElementRight={
+            isAuthenticated() ? (
+              <LoggedIn onLogoutClick={onLogoutClick} />
+            ) : (
+              <Login onLoginClick={onLoginClick} />
+            )
+          }
+        />
+        {/* <section>
+          <h1 className="app-title">
+            <Link exact="true" to="/" href="/">
+              Confriends
+            </Link>
+          </h1>
+          <div className="app-controls">
+            {isAuthenticated() ? (
+              <Button onClick={onLogoutClick}>Log out</Button>
+            ) : (
+              <Button onClick={onLoginClick}>Log in</Button>
+            )}
+          </div>
+        </section> */}
+      </header>
+    );
+  }
+}
 
 Header.propTypes = {
   isAuthenticated: PropTypes.func.isRequired,

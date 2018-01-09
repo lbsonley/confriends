@@ -1,6 +1,12 @@
+// react core
 import React from 'react';
+
+// react extensions
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+
+// material ui
+import { Card, CardHeader, CardText } from 'material-ui/Card';
 
 import './FlexList.css';
 
@@ -37,7 +43,7 @@ const VisualListItem = props => {
         to={`/${props.listName}/${props.item._id}`} // eslint-disable-line no-underscore-dangle
         href={`/${props.listName}/${props.item._id}`} // eslint-disable-line no-underscore-dangle
       >
-        <div className={props.optionalClass}>
+        {/* <div className={props.optionalClass}>
           {props.item.image && (
             <div className={`${props.optionalClass}__image`}>
               <img
@@ -58,7 +64,16 @@ const VisualListItem = props => {
               <span>{formatDate(props.item.date)}</span>
             </p>
           </div>
-        </div>
+        </div> */}
+        <Card>
+          <CardHeader title={props.item.name} />
+          <CardText>
+            <span>
+              {props.item.location.city}, {props.item.location.country}
+            </span>
+            <span>{formatDate(props.item.date)}</span>
+          </CardText>
+        </Card>
       </Link>
     </li>
   );

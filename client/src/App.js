@@ -69,9 +69,10 @@ class App extends Component {
                 return <Callback {...props} />;
               }}
             />
+            {/* <Route path="/" render={() => <NavMain />} /> */}
 
             {/* logic to determine whether or not to display the dashboard on the homepage */}
-            <Media query="(min-width: 481px)">
+            {/* <Media query="(min-width: 481px)">
               {matches =>
                 matches ? (
                   <Switch>
@@ -82,7 +83,7 @@ class App extends Component {
                   <Route exact path="/" render={() => <NavMain />} />
                 )
               }
-            </Media>
+            </Media> */}
 
             <section className="app-content">
               <Route exact path="/dummy" component={Dummy} />

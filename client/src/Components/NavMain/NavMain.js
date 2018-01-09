@@ -1,13 +1,38 @@
+// react base
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
+
+// react extensions
+import { Link } from 'react-router-dom';
 import Media from 'react-media';
 
+// material ui components
+import Paper from 'material-ui/Paper';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+
+// css
 import './NavMain.css';
 
 const NavMain = () => (
   <nav className="app-nav">
-    <ul className="nav-list">
+    <Paper>
+      <Menu>
+        <MenuItem
+          primaryText="Dashboard"
+          containerElement={<Link to="/dummy" />}
+        />
+        <MenuItem
+          primaryText="Conferences"
+          containerElement={<Link to="/conferences" />}
+        />
+        <MenuItem
+          primaryText="Team Building"
+          containerElement={<Link to="/team-building" />}
+        />
+      </Menu>
+    </Paper>
+    {/* <ul className="nav-list">
       <Media
         query="(max-width: 480px)"
         render={() => (
@@ -28,7 +53,7 @@ const NavMain = () => (
           Team Building
         </NavLink>
       </li>
-    </ul>
+    </ul> */}
   </nav>
 );
 
