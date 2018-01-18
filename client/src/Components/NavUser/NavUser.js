@@ -1,5 +1,5 @@
 /**
- * NavMain.js
+ * NavUser.js
  * @desc
  * @author BeS
  */
@@ -8,11 +8,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-// react extensions
-import { Link } from 'react-router-dom';
-
 // utilities
 import classNames from 'classnames';
+
+// react extensions
+import { Link } from 'react-router-dom';
 
 // material ui components
 import { withStyles } from 'material-ui/styles';
@@ -24,11 +24,7 @@ import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 
 // material ui icons
-import NavigationClose from 'material-ui-icons/Close';
-import MenuIcon from 'material-ui-icons/Menu';
-
-// css
-import './NavMain.css';
+import MoreVertIcon from 'material-ui-icons/MoreVert';
 
 const styles = {
   popperClose: {
@@ -36,43 +32,47 @@ const styles = {
   },
 };
 
-class NavMain extends Component {
+class LoggedIn extends Component {
   state = {
-    navIsExpanded: false,
+    userMenuIsExpanded: false,
   };
 
   openMenu = () => {
-    console.log('open Main Menu');
-    this.setState({ navIsExpanded: true });
+    console.log('open User Menu');
+    this.setState({ userMenuIsExpanded: true });
   };
 
   closeMenu = () => {
-    console.log('close Main Menu');
-    this.setState({ navIsExpanded: false });
+    console.log('close User Menu');
+    this.setState({ userMenuIsExpanded: false });
   };
 
   render() {
+    const { onLogoutClick } = this.props;
+
     return (
       <Manager>
         <Target>
           <IconButton
-            aria-owns={this.state.navIsExpanded ? 'menu-list' : null}
+            aria-owns={this.state.userMenuIsExpanded ? 'menu-list' : null}
             aria-haspopup="true"
-            onClick={this.state.navIsExpanded ? this.closeMenu : this.openMenu}
+            onClick={
+              this.state.userMenuIsExpanded ? this.closeMenu : this.openMenu
+            }
           >
-            {this.state.navIsExpanded ? <NavigationClose /> : <MenuIcon />}
+            <MoreVertIcon />
           </IconButton>
         </Target>
         <Popper
           placement="bottom-start"
-          eventsEnabled={this.state.navIsExpanded}
+          eventsEnabled={this.state.userMenuIsExpanded}
           className={classNames({
-            [this.props.classes.popperClose]: !this.state.navIsExpanded,
+            [this.props.classes.popperClose]: !this.state.userMenuIsExpanded,
           })}
         >
           <ClickAwayListener onClickAway={this.closeMenu}>
             <Grow
-              in={this.state.navIsExpanded}
+              in={this.state.userMenuIsExpanded}
               id="menu-list"
               style={{ transformOrigin: '0 0 0' }}
             >
@@ -81,24 +81,11 @@ class NavMain extends Component {
                   <MenuItem
                     onClick={this.closeMenu}
                     component={Link}
-                    to="/dummy"
+                    to="/profile"
                   >
-                    Dashboard
+                    Profile
                   </MenuItem>
-                  <MenuItem
-                    onClick={this.closeMenu}
-                    component={Link}
-                    to="/conferences"
-                  >
-                    Conferences
-                  </MenuItem>
-                  <MenuItem
-                    onClick={this.closeMenu}
-                    component={Link}
-                    to="/team-building"
-                  >
-                    Teambuilding
-                  </MenuItem>
+                  <MenuItem onClick={onLogoutClick}>Logout</MenuItem>
                 </MenuList>
               </Paper>
             </Grow>
@@ -109,4 +96,4 @@ class NavMain extends Component {
   }
 }
 
-export default withStyles(styles)(NavMain);
+export default withStyles(styles)(LoggedIn);

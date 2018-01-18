@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 // material ui
-import { Card, CardHeader, CardText } from 'material-ui/Card';
+import Card, { CardHeader, CardContent } from 'material-ui/Card';
 
 import './FlexList.css';
 
@@ -67,12 +67,12 @@ const VisualListItem = props => {
         </div> */}
         <Card>
           <CardHeader title={props.item.name} />
-          <CardText>
+          <CardContent>
             <span>
               {props.item.location.city}, {props.item.location.country}
             </span>
             <span>{formatDate(props.item.date)}</span>
-          </CardText>
+          </CardContent>
         </Card>
       </Link>
     </li>
