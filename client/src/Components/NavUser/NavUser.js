@@ -38,12 +38,10 @@ class LoggedIn extends Component {
   };
 
   openMenu = () => {
-    console.log('open User Menu');
     this.setState({ userMenuIsExpanded: true });
   };
 
   closeMenu = () => {
-    console.log('close User Menu');
     this.setState({ userMenuIsExpanded: false });
   };
 

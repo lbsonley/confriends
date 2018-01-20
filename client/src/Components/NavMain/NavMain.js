@@ -42,12 +42,10 @@ class NavMain extends Component {
   };
 
   openMenu = () => {
-    console.log('open Main Menu');
     this.setState({ navIsExpanded: true });
   };
 
   closeMenu = () => {
-    console.log('close Main Menu');
     this.setState({ navIsExpanded: false });
   };
 
