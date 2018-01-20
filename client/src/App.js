@@ -45,6 +45,18 @@ class App extends Component {
     auth.logout();
   };
 
+  componentWillMount = () => {
+    this.setState({ profile: {} });
+    const { userProfile, getProfile } = auth;
+    if (!userProfile) {
+      getProfile((err, profile) => {
+        this.setState({ profile });
+      });
+    } else {
+      this.setState({ profile: userProfile });
+    }
+  };
+
   render() {
     return (
       <Router history={history}>
@@ -101,14 +113,18 @@ class App extends Component {
             <Route
               path="/:collectionName/:id"
               render={props => (
-                <ConferenceDetailsContainer auth={auth} {...props} />
+                <ConferenceDetailsContainer
+                  auth={auth}
+                  profile={this.state.profile}
+                  {...props}
+                />
               )}
             />
             <Route
               path="/profile"
               render={props =>
                 auth.isAuthenticated() ? (
-                  <Profile auth={auth} {...props} />
+                  <Profile profile={this.state.profile} {...props} />
                 ) : (
                   <Redirect to="/" />
                 )

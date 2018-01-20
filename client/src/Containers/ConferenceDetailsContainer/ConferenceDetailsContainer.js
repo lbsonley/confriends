@@ -46,18 +46,6 @@ export default class ConferenceDetailsContainer extends Component {
         this.setState({ event: data.event }); // eslint-disable-line react/no-did-mount-set-state
       })
       .catch(err => this.logger(err));
-
-    // fetch user profile and store it in state
-    const { userProfile, getProfile } = this.props.auth;
-    if (!userProfile) {
-      getProfile((err, profile) => {
-        this.setState({ profile }); // eslint-disable-line react/no-did-mount-set-state
-      });
-    } else {
-      this.setState({ profile: userProfile }); // eslint-disable-line react/no-did-mount-set-state
-    }
-
-    this.logger('componentDidMount');
   }
 
   /**
@@ -85,12 +73,12 @@ export default class ConferenceDetailsContainer extends Component {
    * @description check if event is already in a user's event list
    */
   checkUsersEventList() {
-    const { user_metadata } = this.state.profile;
+    const { user_metadata } = this.props.profile;
     const { _id } = this.state.event;
 
     this.checkArray({
       array: user_metadata.events,
-      condition: _id,
+      value: _id,
       cb: this.addEventToUser,
     });
   }
@@ -100,7 +88,7 @@ export default class ConferenceDetailsContainer extends Component {
    * @description add event to event list in user profile
    */
   addEventToUser = () => {
-    const { user_metadata, user_id } = this.state.profile;
+    const { user_metadata, user_id } = this.props.profile;
     const { name, _id } = this.state.event;
     const { getIdToken, setupUserManagementAPI } = this.props.auth;
     const idToken = getIdToken();
@@ -127,12 +115,12 @@ export default class ConferenceDetailsContainer extends Component {
    * @description check if user is already present on event's attendee list
    */
   checkEventsUserList() {
-    const { user_id, nickname } = this.state.profile;
+    const { user_id } = this.props.profile;
     const { attendees } = this.state.event;
 
     this.checkArray({
       array: attendees,
-      condition: user_id,
+      value: user_id,
       cb: this.addUserToEvent,
     });
   }
@@ -142,7 +130,7 @@ export default class ConferenceDetailsContainer extends Component {
    * @description add user to attendee list in event data
    */
   addUserToEvent = () => {
-    const { nickname, user_id } = this.state.profile;
+    const { nickname, user_id } = this.props.profile;
 
     fetch(`/api${this.props.location.pathname}`, {
       method: 'PUT',
@@ -200,9 +188,16 @@ ConferenceDetailsContainer.propTypes = {
       id: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
+  profile: PropTypes.shape({
+    user_id: PropTypes.string.isRequired,
+    nickname: PropTypes.string.isRequired,
+    user_metadata: PropTypes.shape({
+      events: PropTypes.array.isRequired,
+    }),
+  }).isRequired,
   auth: PropTypes.shape({
-    userProfile: PropTypes.object,
-    getProfile: PropTypes.func.isRequired,
+    getIdToken: PropTypes.func.isRequired,
+    setupUserManagementAPI: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.func.isRequired,
   }).isRequired,
 };
