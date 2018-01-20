@@ -61,6 +61,26 @@ export default class ConferenceDetailsContainer extends Component {
   }
 
   /**
+   * checkArray
+   * @description check array for presence of item and execute callback
+   * @param {Array} array - array to be checked
+   * @param {String} value - item to look for in array
+   * @param {func} cb - function to execute if value is found
+   */
+  checkArray = ({ array, value, cb }) => {
+    // check if array has entries
+    if (array && array.length > 0) {
+      // check if value is present in array
+      if (!logic.arrayHasValue(array, value)) {
+        // add value to array
+        cb();
+      }
+    } else {
+      cb();
+    }
+  };
+
+  /**
    * checkUsersEventList
    * @description check if event is already in a user's event list
    */
@@ -68,41 +88,18 @@ export default class ConferenceDetailsContainer extends Component {
     const { user_metadata } = this.state.profile;
     const { _id } = this.state.event;
 
-    if (user_metadata.events && user_metadata.events.length > 0) {
-      // check if event is already in user's list
-      if (!logic.arrayHasValue(user_metadata.events, _id)) {
-        this.addEventToUser();
-      }
-    } else {
-      this.addEventToUser();
-    }
-  }
-
-  /**
-   * checkEventsUserList
-   * @description check if user is already present on event's attendee list
-   */
-  checkEventsUserList() {
-    const { user_id, nickname } = this.state.profile;
-    const { attendees } = this.state.event;
-
-    // check if an attendee list exists for this event
-    if (attendees && attendees.length > 0) {
-      // check if user is already on attendee list
-      if (!logic.arrayHasValue(attendees, user_id)) {
-        this.addUserToEvent(user_id, nickname);
-      }
-    } else {
-      // start an attendee list for this event
-      this.addUserToEvent(user_id, nickname);
-    }
+    this.checkArray({
+      array: user_metadata.events,
+      condition: _id,
+      cb: this.addEventToUser,
+    });
   }
 
   /**
    * addEventToUser
    * @description add event to event list in user profile
    */
-  addEventToUser() {
+  addEventToUser = () => {
     const { user_metadata, user_id } = this.state.profile;
     const { name, _id } = this.state.event;
     const { getIdToken, setupUserManagementAPI } = this.props.auth;
@@ -114,6 +111,8 @@ export default class ConferenceDetailsContainer extends Component {
       title: name,
       // eslint-disable-next-line no-underscore-dangle
       id: _id,
+      procurementLink: '',
+      approved: false,
     });
 
     auth0Manage.patchUserMetadata(
@@ -121,19 +120,39 @@ export default class ConferenceDetailsContainer extends Component {
       { events: updatedEvents },
       (err, data) => this.logger(err, data),
     );
+  };
+
+  /**
+   * checkEventsUserList
+   * @description check if user is already present on event's attendee list
+   */
+  checkEventsUserList() {
+    const { user_id, nickname } = this.state.profile;
+    const { attendees } = this.state.event;
+
+    this.checkArray({
+      array: attendees,
+      condition: user_id,
+      cb: this.addUserToEvent,
+    });
   }
 
   /**
    * addUserToEvent
    * @description add user to attendee list in event data
-   * @param {String} userId user id
-   * @param {String} nickname user name
    */
-  addUserToEvent(userId, nickname) {
+  addUserToEvent = () => {
+    const { nickname, user_id } = this.state.profile;
+
     fetch(`/api${this.props.location.pathname}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: userId, name: nickname }),
+      body: JSON.stringify({
+        id: user_id,
+        name: nickname,
+        procurementLink: '',
+        approved: false,
+      }),
     })
       .then(res => res.json())
       .then(data => {
@@ -146,7 +165,7 @@ export default class ConferenceDetailsContainer extends Component {
         this.logger(data);
       })
       .catch(err => this.logger(err));
-  }
+  };
 
   /**
    * validateUserAttend
