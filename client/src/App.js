@@ -121,12 +121,6 @@ class App extends Component {
   }
 }
 
-App.propTypes = {
-  auth: PropTypes.shape({
-    login: PropTypes.func.isRequired,
-    logout: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.func.isRequired,
-  }).isRequired,
-};
+App.propTypes = {};
 
 export default App;

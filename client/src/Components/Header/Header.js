@@ -54,6 +54,7 @@ Header.propTypes = {
   isAuthenticated: PropTypes.func.isRequired,
   onLoginClick: PropTypes.func.isRequired,
   onLogoutClick: PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Header);
