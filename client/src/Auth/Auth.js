@@ -26,6 +26,7 @@ export default class Auth {
     this.setSession = this.setSession.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.setupUserManagementAPI = this.setupUserManagementAPI.bind(this);
+    this.getProfileAsync = this.getProfileAsync.bind(this);
   }
   logger = bows('Auth');
 
@@ -37,6 +38,9 @@ export default class Auth {
     responseType: 'token id_token',
     scope: 'openid profile',
   });
+
+  // create a property on the class to cache userProfile
+  userProfile;
 
   login() {
     this.auth0.authorize();
@@ -59,13 +63,37 @@ export default class Auth {
     return localStorage.getItem('id_token');
   }
 
+  getProfileAsync() {
+    const accessToken = this.getAccessToken();
+    const idToken = this.getIdToken();
+
+    return new Promise((resolve, reject) => {
+      if (accessToken && idToken) {
+        const auth0Manage = this.setupUserManagementAPI(idToken);
+        this.auth0.client.userInfo(accessToken, (err, profile) => {
+          if (err) {
+            reject(err);
+          } else if (profile) {
+            auth0Manage.getUser(profile.sub, (error, fullProfile) => {
+              if (error) {
+                reject(error);
+              }
+              this.userProfile = fullProfile;
+              resolve(fullProfile);
+            });
+          }
+        });
+      }
+    });
+  }
+
   getProfile(cb) {
     const accessToken = this.getAccessToken();
     const idToken = this.getIdToken();
-    const auth0Manage = this.setupUserManagementAPI(idToken);
 
     this.userProfile = null;
-    if (accessToken) {
+    if (accessToken && idToken) {
+      const auth0Manage = this.setupUserManagementAPI(idToken);
       this.auth0.client.userInfo(accessToken, (err, profile) => {
         if (profile) {
           auth0Manage.getUser(profile.sub, (error, fullProfile) => {
@@ -113,15 +141,19 @@ export default class Auth {
   }
 
   handleAuthentication() {
-    this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        this.logger('setting the sesh', authResult);
-        this.setSession(authResult);
-        history.push('/');
-      } else if (err) {
-        history.replace('/');
-        this.logger('Error: ', err);
-      }
+    return new Promise((resolve, reject) => {
+      this.auth0.parseHash((err, authResult) => {
+        if (authResult && authResult.accessToken && authResult.idToken) {
+          this.logger('setting the sesh', authResult);
+          this.setSession(authResult);
+          history.push('/');
+          resolve();
+        } else if (err) {
+          history.replace('/');
+          this.logger('Error: ', err);
+          reject(err);
+        }
+      });
     });
   }
 
@@ -134,7 +166,7 @@ export default class Auth {
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
     // navigate to home root
-    history.push('/');
+    // history.push('/');
   }
 
   isAuthenticated() {

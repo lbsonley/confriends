@@ -30,12 +30,6 @@ import './App.css';
 
 const auth = new Auth();
 
-const handleAuthentication = (nextState /* , replace */) => {
-  if (/access_token|id_token|error/.test(nextState.location.hash)) {
-    auth.handleAuthentication();
-  }
-};
-
 class App extends Component {
   login = () => {
     auth.login();
@@ -45,14 +39,25 @@ class App extends Component {
     auth.logout();
   };
 
+  handleAuthentication = (nextState /* , replace */) => {
+    if (/access_token|id_token|error/.test(nextState.location.hash)) {
+      auth
+        .handleAuthentication()
+        .then(auth.getProfileAsync)
+        .then(profile => this.setState({ profile }))
+        .catch(err => console.log(err));
+    }
+  };
+
   componentWillMount = () => {
     this.setState({ profile: {} });
-    const { userProfile, getProfile } = auth;
+    const { userProfile, getProfileAsync } = auth;
     if (!userProfile) {
-      getProfile((err, profile) => {
-        this.setState({ profile });
-      });
+      getProfileAsync()
+        .then(profile => this.setState({ profile }))
+        .catch(err => console.log(err));
     } else {
+      console.log('using cached profile:', userProfile);
       this.setState({ profile: userProfile });
     }
   };
@@ -70,7 +75,7 @@ class App extends Component {
           <Route
             path="/login"
             render={props => {
-              handleAuthentication(props);
+              this.handleAuthentication(props);
               return <Callback {...props} />;
             }}
           />
