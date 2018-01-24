@@ -12,13 +12,9 @@ import Table, {
 } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
 
-const Attendee = props => (
-  <TableRow>
-    <TableCell>{props.attendee.name}</TableCell>
-    <TableCell>{props.attendee.procurementLink}</TableCell>
-    <TableCell>{props.attendee.approved}</TableCell>
-  </TableRow>
-);
+// my components
+import Attendee from './Attendee';
+import { withContext } from '../../Containers/Provider/Provider';
 
 const styles = theme => ({
   root: {
@@ -29,15 +25,12 @@ const styles = theme => ({
   table: {
     minWidth: 700,
   },
+  centered: {
+    textAlign: 'center',
+  },
 });
 
 const AttendeeList = props => {
-  const listStyle = {
-    listStyleType: 'none',
-    paddingLeft: 0,
-    margin: 0,
-  };
-
   this.createListItem = attendee => (
     <Attendee key={attendee.id} attendee={attendee} />
   );
@@ -51,7 +44,9 @@ const AttendeeList = props => {
           <TableRow>
             <TableCell>Attendee Name</TableCell>
             <TableCell>Procurement Link</TableCell>
-            <TableCell>Approved</TableCell>
+            <TableCell>Approved {props.eventId}</TableCell>
+            <TableCell className={props.classes.centered}>Edit</TableCell>
+            <TableCell className={props.classes.centered}>Delete</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>{props.attendees.map(this.createListItem)}</TableBody>
@@ -64,12 +59,8 @@ AttendeeList.propTypes = {
   attendees: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-Attendee.propTypes = {
-  attendee: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    procurementLink: PropTypes.string,
-    approved: PropTypes.bool.isRequired,
-  }),
+const contextTypes = {
+  eventId: PropTypes.string,
 };
 
-export default withStyles(styles)(AttendeeList);
+export default withContext(contextTypes)(withStyles(styles)(AttendeeList));

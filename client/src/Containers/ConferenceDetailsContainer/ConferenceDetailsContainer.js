@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import bows from 'bows';
 import 'whatwg-fetch';
 
+import Button from 'material-ui/Button';
+import { Provider } from '../Provider/Provider';
 import AttendeeList from '../../Components/AttendeeList/AttendeeList';
-import Button from '../../Components/Button/Button';
 
 import logic from '../../Assets/js/utils/logicHelpers';
 
@@ -169,10 +170,15 @@ export default class ConferenceDetailsContainer extends Component {
         <p>{this.state.event.location.city}</p>
         <p>{this.state.event.location.country}</p>
         {this.props.auth.isAuthenticated() && (
-          <Button onClick={this.validateUserAttend}>Attend</Button>
+          <Button raised color="primary" onClick={this.validateUserAttend}>
+            Attend
+          </Button>
         )}
         {this.state.event.attendees && (
-          <AttendeeList attendees={this.state.event.attendees} />
+          // eslint-disable-next-line no-underscore-dangle
+          <Provider eventId={this.state.event._id}>
+            <AttendeeList attendees={this.state.event.attendees} />
+          </Provider>
         )}
       </div>
     );
@@ -187,10 +193,10 @@ ConferenceDetailsContainer.propTypes = {
     }).isRequired,
   }).isRequired,
   profile: PropTypes.shape({
-    user_id: PropTypes.string.isRequired,
-    nickname: PropTypes.string.isRequired,
+    user_id: PropTypes.string,
+    nickname: PropTypes.string,
     user_metadata: PropTypes.shape({
-      events: PropTypes.array.isRequired,
+      events: PropTypes.array,
     }),
   }).isRequired,
   auth: PropTypes.shape({

@@ -13,11 +13,12 @@ import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
 
 // my components
 import NavMain from '../NavMain/NavMain';
 import NavUser from '../NavUser/NavUser';
-import Button from '../Button/Button';
+// import Button from '../Button/Button';
 
 // css
 import './Header.css';
