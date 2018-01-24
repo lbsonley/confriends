@@ -99,8 +99,6 @@ export default class ConferenceDetailsContainer extends Component {
       title: name,
       // eslint-disable-next-line no-underscore-dangle
       id: _id,
-      procurementLink: '',
-      approved: false,
     });
 
     auth0Manage.patchUserMetadata(

@@ -62,7 +62,12 @@ app.put('/api/:collectionName/:id', (req, res) => {
     { _id: issueId },
     {
       $push: {
-        attendees: { name: req.body.name, id: req.body.id },
+        attendees: {
+          name: req.body.name,
+          id: req.body.id,
+          procurementLink: req.body.procurementLink,
+          approved: req.body.approved,
+        },
       },
     },
     () => {
