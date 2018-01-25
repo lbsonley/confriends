@@ -1,6 +1,7 @@
 // react core
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 // material ui components
 import { withStyles } from 'material-ui/styles';
@@ -26,7 +27,16 @@ const Attendee = props => (
     <TableCell>{props.attendee.procurementLink}</TableCell>
     <TableCell>{props.attendee.approved}</TableCell>
     <TableCell className={props.classes.centered}>
-      <Button fab color="primary" aria-label="edit">
+      <Button
+        fab
+        color="primary"
+        aria-label="edit"
+        component={Link}
+        to={`/${props.collectionName}/${props.eventId}/edit/${
+          props.attendee.id
+        }`}
+        onClick={this.handleOpen}
+      >
         <ModeEditIcon />
       </Button>
     </TableCell>
@@ -40,6 +50,7 @@ const Attendee = props => (
 
 Attendee.propTypes = {
   attendee: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     procurementLink: PropTypes.string,
     approved: PropTypes.bool.isRequired,
@@ -47,10 +58,13 @@ Attendee.propTypes = {
   classes: PropTypes.shape({
     centered: PropTypes.string.isRequired,
   }).isRequired,
+  collectionName: PropTypes.string.isRequired,
+  eventId: PropTypes.string.isRequired,
 };
 
 const contextTypes = {
   eventId: PropTypes.string,
+  collectionName: PropTypes.string,
 };
 
 export default withContext(contextTypes)(withStyles(styles)(Attendee));

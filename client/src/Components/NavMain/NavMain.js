@@ -6,7 +6,6 @@
 
 // react base
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 // react extensions
 import { Link } from 'react-router-dom';
@@ -33,6 +32,9 @@ import './NavMain.css';
 const styles = {
   popperClose: {
     pointerEvents: 'none',
+  },
+  popperOpen: {
+    zIndex: 1,
   },
 };
 
@@ -66,6 +68,7 @@ class NavMain extends Component {
           eventsEnabled={this.state.navIsExpanded}
           className={classNames({
             [this.props.classes.popperClose]: !this.state.navIsExpanded,
+            [this.props.classes.popperOpen]: this.state.navIsExpanded,
           })}
         >
           <ClickAwayListener onClickAway={this.closeMenu}>

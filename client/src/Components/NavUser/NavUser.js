@@ -94,4 +94,8 @@ class LoggedIn extends Component {
   }
 }
 
+LoggedIn.propTypes = {
+  onLogoutClick: PropTypes.func.isRequired,
+};
+
 export default withStyles(styles)(LoggedIn);

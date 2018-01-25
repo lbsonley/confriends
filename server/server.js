@@ -42,24 +42,27 @@ const authCheck = jwt({
   algorithms: ['RS256'],
 });
 
+// helper function
+
+const getMongoId = (idString, res) => {
+  // convert the id string to a MongoDB ObjectId
+  try {
+    return ObjectId(idString);
+  } catch (error) {
+    res.status(422).json({ message: `Invalid issue ID format: ${error}` });
+  }
+};
+
 // ** Create API **
 
 /**
  * updating a record
  */
 app.put('/api/:collectionName/:id', (req, res) => {
-  let issueId;
-
-  // convert the id string to a MongoDB ObjectId
-  try {
-    issueId = ObjectId(req.params.id);
-  } catch (error) {
-    res.status(422).json({ message: `Invalid issue ID format: ${error}` });
-    return;
-  }
+  const eventId = getMongoId(req.params.id, res);
 
   db.collection(req.params.collectionName).update(
-    { _id: issueId },
+    { _id: eventId },
     {
       $push: {
         attendees: {
@@ -73,7 +76,7 @@ app.put('/api/:collectionName/:id', (req, res) => {
     () => {
       db
         .collection(req.params.collectionName)
-        .find({ _id: issueId })
+        .find({ _id: eventId })
         .limit(1)
         .next()
         .then(savedEvent => {
@@ -91,22 +94,33 @@ app.put('/api/:collectionName/:id', (req, res) => {
 // ** Read API **
 
 /**
+ * endpoint for edit event attendee page
+ */
+app.get('/api/:collectionName/:id/edit/:userId', (req, res) => {
+  const eventId = getMongoId(req.params.id, res);
+  db
+    .collection(req.params.collectionName)
+    // find the matching event and return it's attendees array
+    .findOne({ _id: eventId }, { attendees: 1 })
+    .then(event => {
+      // filter the attendees array for the attendee to be edited
+      const matchingAttendee = event.attendees.filter(
+        attendee => attendee.id === req.params.userId,
+      );
+      logger('sending', matchingAttendee);
+      res.json({ ...matchingAttendee[0] });
+    });
+});
+
+/**
  * endpoint for event detail page
  */
 app.get('/api/:collectionName/:id', (req, res) => {
-  let issueId;
-
-  // convert the id string to a MongoDB ObjectId
-  try {
-    issueId = ObjectId(req.params.id);
-  } catch (error) {
-    res.status(422).json({ message: `Invalid issue ID format: ${error}` });
-    return;
-  }
+  const eventId = getMongoId(req.params.id, res);
 
   db
     .collection(req.params.collectionName)
-    .find({ _id: issueId })
+    .find({ _id: eventId })
     .limit(1)
     .next()
     .then(event => {

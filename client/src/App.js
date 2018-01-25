@@ -6,11 +6,9 @@
 
 // react base
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 // react extensions
-import { Router, Route, Switch, Redirect } from 'react-router-dom';
-import Media from 'react-media';
+import { Router, Route, Redirect } from 'react-router-dom';
 
 // my components
 import ListContainer from './Containers/ListContainer/ListContainer';
@@ -19,6 +17,7 @@ import Profile from './Components/Profile/Profile';
 import Callback from './Auth/Callback';
 import Dummy from './Components/Dummy';
 import Header from './Components/Header/Header';
+import UpdateAttendeeForm from './Components/UpdateAttendeeForm/UpdateAttendeeForm';
 
 // utils
 import Auth from './Auth/Auth';
@@ -116,9 +115,20 @@ class App extends Component {
               )}
             />
             <Route
+              exact
               path="/:collectionName/:id"
               render={props => (
                 <ConferenceDetailsContainer
+                  auth={auth}
+                  profile={this.state.profile}
+                  {...props}
+                />
+              )}
+            />
+            <Route
+              path="/:collectionName/:id/edit/:userId"
+              render={props => (
+                <UpdateAttendeeForm
                   auth={auth}
                   profile={this.state.profile}
                   {...props}

@@ -1,9 +1,15 @@
+// react core
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
+// utilities
 import bows from 'bows';
 import 'whatwg-fetch';
 
+// material ui components
 import Button from 'material-ui/Button';
+
+// my components
 import { Provider } from '../Provider/Provider';
 import AttendeeList from '../../Components/AttendeeList/AttendeeList';
 
@@ -175,8 +181,11 @@ export default class ConferenceDetailsContainer extends Component {
           </Button>
         )}
         {this.state.event.attendees && (
-          // eslint-disable-next-line no-underscore-dangle
-          <Provider eventId={this.state.event._id}>
+          <Provider
+            // eslint-disable-next-line no-underscore-dangle
+            eventId={this.state.event._id}
+            collectionName={this.props.match.params.collectionName}
+          >
             <AttendeeList attendees={this.state.event.attendees} />
           </Provider>
         )}

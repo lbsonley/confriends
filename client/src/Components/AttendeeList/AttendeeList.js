@@ -14,7 +14,6 @@ import Paper from 'material-ui/Paper';
 
 // my components
 import Attendee from './Attendee';
-import { withContext } from '../../Containers/Provider/Provider';
 
 const styles = theme => ({
   root: {
@@ -44,7 +43,7 @@ const AttendeeList = props => {
           <TableRow>
             <TableCell>Attendee Name</TableCell>
             <TableCell>Procurement Link</TableCell>
-            <TableCell>Approved {props.eventId}</TableCell>
+            <TableCell>Approved</TableCell>
             <TableCell className={props.classes.centered}>Edit</TableCell>
             <TableCell className={props.classes.centered}>Delete</TableCell>
           </TableRow>
@@ -59,8 +58,4 @@ AttendeeList.propTypes = {
   attendees: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const contextTypes = {
-  eventId: PropTypes.string,
-};
-
-export default withContext(contextTypes)(withStyles(styles)(AttendeeList));
+export default withStyles(styles)(AttendeeList);

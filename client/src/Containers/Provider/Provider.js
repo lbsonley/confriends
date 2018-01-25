@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 class Provider extends Component {
   getChildContext() {
     return {
-      eventId: this.props.eventId,
+      ...this.props,
     };
   }
 
@@ -32,6 +32,8 @@ Provider.defaultProps = {
 
 Provider.childContextTypes = {
   eventId: PropTypes.string,
+  collectionName: PropTypes.string,
+  children: PropTypes.object.isRequired,
 };
 
 const withContext = contextTypes => Component => {
