@@ -19,7 +19,7 @@ export default class ListContainer extends Component {
   }
 
   componentDidMount() {
-    const { getAccessToken } = this.props.auth;
+    const { getAccessToken } = this.props;
     fetch(`/api/${this.props.listName}`, {
       headers: {
         Authorization: `Bearer ${getAccessToken()}`,
@@ -42,14 +42,16 @@ export default class ListContainer extends Component {
 
   render() {
     return (
-      <FlexList list={this.state.eventList} listName={this.props.listName} />
+      <FlexList
+        isAuthenticated={this.props.isAuthenticated}
+        list={this.state.eventList}
+        listName={this.props.listName}
+      />
     );
   }
 }
 
 ListContainer.propTypes = {
-  auth: PropTypes.shape({
-    getAccessToken: PropTypes.func.isRequired,
-  }).isRequired,
+  getAccessToken: PropTypes.func.isRequired,
   listName: PropTypes.string.isRequired,
 };

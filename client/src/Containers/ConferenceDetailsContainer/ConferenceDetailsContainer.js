@@ -5,9 +5,15 @@ import PropTypes from 'prop-types';
 // utilities
 import bows from 'bows';
 import 'whatwg-fetch';
+import classNames from 'classnames';
 
 // material ui components
+import { withStyles } from 'material-ui/styles';
+import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
+import Typography from 'material-ui/Typography';
+import Paper from 'material-ui/Paper';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 // my components
 import { Provider } from '../Provider/Provider';
@@ -15,22 +21,25 @@ import AttendeeList from '../../Components/AttendeeList/AttendeeList';
 
 import logic from '../../Assets/js/utils/logicHelpers';
 
-export default class ConferenceDetailsContainer extends Component {
+const querystring = require('querystring');
+
+class ConferenceDetailsContainer extends Component {
   constructor() {
     super();
     this.state = {
       event: {
-        location: {
-          city: '',
-          country: '',
-        },
-        attendees: [],
+        city: '',
+        country: '',
+        name: '',
+        website: '',
       },
+      attendees: [],
     };
     this.addUserToEvent = this.addUserToEvent.bind(this);
     this.checkEventsUserList = this.checkEventsUserList.bind(this);
     this.checkUsersEventList = this.checkUsersEventList.bind(this);
     this.validateUserAttend = this.validateUserAttend.bind(this);
+    this.removeAttendee = this.removeAttendee.bind(this);
 
     this.logger = bows('ConferenceDetailsContainer');
   }
@@ -40,9 +49,16 @@ export default class ConferenceDetailsContainer extends Component {
     fetch(
       `/api/${this.props.match.params.collectionName}/${
         this.props.match.params.id
-      }`,
+      }?userId=123&abc=def`,
     )
       .then(response => {
+        console.log(response.url);
+
+        const re = /\?(.*)/;
+        const queryMatch = re.exec(response.url);
+        console.log(queryMatch);
+        console.log(querystring.parse(queryMatch[1]));
+
         if (response.ok) {
           return response.json();
         }
@@ -53,7 +69,32 @@ export default class ConferenceDetailsContainer extends Component {
         this.setState({ event: data.event }); // eslint-disable-line react/no-did-mount-set-state
       })
       .catch(err => this.logger(err));
+
+    fetch(`/api/attendees/${this.props.match.params.id}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(data => {
+        this.logger('setting new state with: ', data);
+        this.setState({
+          attendees: data.attendees,
+        });
+      })
+      .catch(err => this.logger('Error fetching attendees:', err));
   }
+
+  /**
+   * removeAttendee
+   * @description updates state after removing attendee
+   */
+  removeAttendee = attendees => {
+    this.setState({
+      attendees,
+    });
+  };
 
   /**
    * checkArray
@@ -97,7 +138,7 @@ export default class ConferenceDetailsContainer extends Component {
   addEventToUser = () => {
     const { user_metadata, user_id } = this.props.profile;
     const { name, _id } = this.state.event;
-    const { getIdToken, setupUserManagementAPI } = this.props.auth;
+    const { getIdToken, setupUserManagementAPI } = this.props;
     const idToken = getIdToken();
     const auth0Manage = setupUserManagementAPI(idToken);
     const updatedEvents = user_metadata.events || [];
@@ -120,14 +161,17 @@ export default class ConferenceDetailsContainer extends Component {
    * @description check if user is already present on event's attendee list
    */
   checkEventsUserList() {
-    const { user_id } = this.props.profile;
-    const { attendees } = this.state.event;
+    const { userId } = this.props.profile;
+    const { _id } = this.state.event;
+    const { attendees } = this.state;
 
-    this.checkArray({
-      array: attendees,
-      value: user_id,
-      cb: this.addUserToEvent,
-    });
+    if (
+      !logic.matchUserId(attendees, userId) &&
+      !logic.matchEventId(attendees, _id)
+    ) {
+      this.logger('adding user to event');
+      this.addUserToEvent();
+    }
   }
 
   /**
@@ -137,11 +181,12 @@ export default class ConferenceDetailsContainer extends Component {
   addUserToEvent = () => {
     const { nickname, user_id } = this.props.profile;
 
-    fetch(`/api${this.props.location.pathname}`, {
+    fetch(`/api/attendees/${this.props.match.params.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        id: user_id,
+        eventId: this.props.match.params.id,
+        userId: user_id,
         name: nickname,
         procurementLink: '',
         approved: false,
@@ -149,15 +194,21 @@ export default class ConferenceDetailsContainer extends Component {
     })
       .then(res => res.json())
       .then(data => {
+        this.logger('setting new state with: ', data);
         this.setState(prevState => ({
-          event: {
-            ...prevState.event,
-            attendees: data.attendees,
-          },
+          attendees: [
+            ...prevState.attendees,
+            {
+              eventId: data.eventId,
+              userId: data.userId,
+              name: data.name,
+              procurementLink: data.procurementLink,
+              approved: data.approved,
+            },
+          ],
         }));
-        this.logger(data);
       })
-      .catch(err => this.logger(err));
+      .catch(err => this.logger('error adding attendee', err));
   };
 
   /**
@@ -171,28 +222,105 @@ export default class ConferenceDetailsContainer extends Component {
 
   render() {
     return (
-      <div>
-        <h3 className="app-content__header">{this.state.event.name}</h3>
-        <p>{this.state.event.location.city}</p>
-        <p>{this.state.event.location.country}</p>
-        {this.props.auth.isAuthenticated() && (
-          <Button raised color="primary" onClick={this.validateUserAttend}>
-            Attend
-          </Button>
-        )}
-        {this.state.event.attendees && (
-          <Provider
-            // eslint-disable-next-line no-underscore-dangle
-            eventId={this.state.event._id}
-            collectionName={this.props.match.params.collectionName}
-          >
-            <AttendeeList attendees={this.state.event.attendees} />
-          </Provider>
-        )}
+      <div className="twocolumn">
+        <Typography type="display2" className={this.props.classes.card}>
+          {this.state.event.name}
+        </Typography>
+        <Grid container style={{ padding: 24 }} spacing={48}>
+          <Grid item xs={12}>
+            <Typography type="headline" gutterBottom>
+              Details
+            </Typography>
+            <Typography type="body1">
+              {this.state.event.city}, {this.state.event.country}
+            </Typography>
+            <Typography type="body1">{this.state.event.date}</Typography>
+            <Button
+              color="primary"
+              type="body1"
+              href={this.state.event.website}
+              target="_blank"
+              className={classNames({
+                [this.props.classes.gutterBottom]: true,
+                [this.props.classes.link]: true,
+              })}
+            >
+              {this.state.event.website}
+            </Button>
+          </Grid>
+          {this.state.event.description ? (
+            <Grid item xs={12}>
+              <Typography type="headline" gutterBottom>
+                Description
+              </Typography>
+              <Typography
+                type="body1"
+                className={this.props.classes.gutterBottom}
+              >
+                {this.state.event.description}
+              </Typography>
+            </Grid>
+          ) : null}
+        </Grid>
+        <section className={this.props.classes.card}>
+          {this.props.isAuthenticated() ? (
+            <div>
+              <Provider
+                // eslint-disable-next-line no-underscore-dangle
+                eventId={this.state.event._id}
+                collectionName={this.props.match.params.collectionName}
+                isAuthenticated={this.props.isAuthenticated}
+                removeAttendee={this.removeAttendee}
+              >
+                <AttendeeList attendees={this.state.attendees} />
+              </Provider>
+              <Button
+                className={this.props.classes.button}
+                style={{ padding: 16 }}
+                raised
+                color="primary"
+                onClick={this.validateUserAttend}
+              >
+                Attend
+              </Button>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center' }}>
+              <Typography align="center" type="subheading" gutterBottom>
+                Want to attend this conference?
+              </Typography>
+              <Button
+                className={this.props.classes.button}
+                style={{ padding: 24 }}
+                raised
+                color="primary"
+                onClick={this.props.onLoginClick}
+              >
+                Login to get started
+              </Button>
+            </div>
+          )}
+        </section>
       </div>
     );
   }
 }
+
+const styles = theme => ({
+  card: theme.mixins.gutters({
+    padding: theme.spacing.unit * 3,
+  }),
+  button: theme.mixins.gutters({
+    marginTop: theme.spacing.unit * 3,
+  }),
+  gutterBottom: {
+    marginBottom: theme.spacing.unit * 5,
+  },
+  link: {
+    paddingLeft: 0,
+    textTransform: 'lowercase',
+  },
+});
 
 ConferenceDetailsContainer.propTypes = {
   match: PropTypes.shape({
@@ -208,9 +336,9 @@ ConferenceDetailsContainer.propTypes = {
       events: PropTypes.array,
     }),
   }).isRequired,
-  auth: PropTypes.shape({
-    getIdToken: PropTypes.func.isRequired,
-    setupUserManagementAPI: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.func.isRequired,
-  }).isRequired,
+  getIdToken: PropTypes.func.isRequired,
+  setupUserManagementAPI: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.func.isRequired,
 };
+
+export default withStyles(styles)(ConferenceDetailsContainer);

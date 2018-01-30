@@ -30,6 +30,9 @@ const styles = {
   popperClose: {
     pointerEvents: 'none',
   },
+  popperOpen: {
+    zIndex: 1,
+  },
 };
 
 class LoggedIn extends Component {
@@ -58,21 +61,22 @@ class LoggedIn extends Component {
               this.state.userMenuIsExpanded ? this.closeMenu : this.openMenu
             }
           >
-            <MoreVertIcon />
+            <MoreVertIcon color="contrast" />
           </IconButton>
         </Target>
         <Popper
-          placement="bottom-start"
+          placement="bottom-end"
           eventsEnabled={this.state.userMenuIsExpanded}
           className={classNames({
             [this.props.classes.popperClose]: !this.state.userMenuIsExpanded,
+            [this.props.classes.popperOpen]: this.state.userMenuIsExpanded,
           })}
         >
           <ClickAwayListener onClickAway={this.closeMenu}>
             <Grow
               in={this.state.userMenuIsExpanded}
               id="menu-list"
-              style={{ transformOrigin: '0 0 0' }}
+              style={{ transformOrigin: 'right top 0' }}
             >
               <Paper>
                 <MenuList role="menu">

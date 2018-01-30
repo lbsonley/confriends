@@ -24,6 +24,8 @@ class Provider extends Component {
 Provider.propTypes = {
   children: PropTypes.object.isRequired,
   eventId: PropTypes.string,
+  isAuthenticated: PropTypes.func.isRequired,
+  removeAttendee: PropTypes.func.isRequired,
 };
 
 Provider.defaultProps = {
@@ -33,6 +35,8 @@ Provider.defaultProps = {
 Provider.childContextTypes = {
   eventId: PropTypes.string,
   collectionName: PropTypes.string,
+  isAuthenticated: PropTypes.func.isRequired,
+  removeAttendee: PropTypes.func.isRequired,
   children: PropTypes.object.isRequired,
 };
 

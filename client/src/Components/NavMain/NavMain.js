@@ -60,7 +60,11 @@ class NavMain extends Component {
             aria-haspopup="true"
             onClick={this.state.navIsExpanded ? this.closeMenu : this.openMenu}
           >
-            {this.state.navIsExpanded ? <NavigationClose /> : <MenuIcon />}
+            {this.state.navIsExpanded ? (
+              <NavigationClose color="contrast" />
+            ) : (
+              <MenuIcon color="contrast" />
+            )}
           </IconButton>
         </Target>
         <Popper
@@ -92,13 +96,6 @@ class NavMain extends Component {
                     to="/conferences"
                   >
                     Conferences
-                  </MenuItem>
-                  <MenuItem
-                    onClick={this.closeMenu}
-                    component={Link}
-                    to="/team-building"
-                  >
-                    Teambuilding
                   </MenuItem>
                 </MenuList>
               </Paper>

@@ -11,9 +11,11 @@ import Table, {
   TableRow,
 } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
+import Typography from 'material-ui/Typography';
 
-// my components
+// my components and utils
 import Attendee from './Attendee';
+import { withContext } from '../../Containers/Provider/Provider';
 
 const styles = theme => ({
   root: {
@@ -31,26 +33,41 @@ const styles = theme => ({
 
 const AttendeeList = props => {
   this.createListItem = attendee => (
-    <Attendee key={attendee.id} attendee={attendee} />
+    <Attendee key={attendee.userId} attendee={attendee} />
   );
 
   // return <ul style={listStyle}>{props.attendees.map(this.createListItem)}</ul>;
 
   return (
-    <Paper className={props.classes.root}>
-      <Table className={props.classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell>Attendee Name</TableCell>
-            <TableCell>Procurement Link</TableCell>
-            <TableCell>Approved</TableCell>
-            <TableCell className={props.classes.centered}>Edit</TableCell>
-            <TableCell className={props.classes.centered}>Delete</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>{props.attendees.map(this.createListItem)}</TableBody>
-      </Table>
-    </Paper>
+    <div>
+      <Typography type="headline">Attendee List</Typography>
+      <Paper className={props.classes.root}>
+        <Table className={props.classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Attendee Name</TableCell>
+              <TableCell>Procurement Ticket</TableCell>
+              <TableCell className={props.classes.centered}>Approved</TableCell>
+              {props.isAuthenticated() ? (
+                <TableCell className={props.classes.centered}>Edit</TableCell>
+              ) : null}
+              {props.isAuthenticated() ? (
+                <TableCell className={props.classes.centered}>Delete</TableCell>
+              ) : null}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {props.attendees.length ? (
+              props.attendees.map(this.createListItem)
+            ) : (
+              <TableRow>
+                <TableCell>No attendees registered</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Paper>
+    </div>
   );
 };
 
@@ -58,4 +75,8 @@ AttendeeList.propTypes = {
   attendees: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-export default withStyles(styles)(AttendeeList);
+const contextTypes = {
+  isAuthenticated: PropTypes.func,
+};
+
+export default withContext(contextTypes)(withStyles(styles)(AttendeeList));

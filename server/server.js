@@ -13,7 +13,7 @@ require('dotenv').config();
 const app = express();
 let db;
 
-MongoClient.connect('mongodb://localhost/events')
+MongoClient.connect('mongodb://localhost/confriends')
   .then(connection => {
     db = connection;
     app.listen(3001, () => logger('running on port 3001'));
@@ -53,39 +53,113 @@ const getMongoId = (idString, res) => {
   }
 };
 
+// ** Delete API **
+/**
+ * delete an attendee
+ */
+app.delete('/api/:collectionName/delete', (req, res) => {
+  logger('body', req.body);
+  const { eventId, userId } = req.body;
+  db
+    .collection(req.params.collectionName)
+    .findOneAndDelete({ eventId, userId }, err => {
+      db
+        .collection(req.params.collectionName)
+        .find({ eventId })
+        .toArray()
+        .then(attendees => {
+          logger('attendees', attendees);
+          res.json({ attendees });
+        });
+    });
+});
+
 // ** Create API **
 
 /**
- * updating a record
+ * updating an event's attendee with new approval info
  */
-app.put('/api/:collectionName/:id', (req, res) => {
-  const eventId = getMongoId(req.params.id, res);
-
-  db.collection(req.params.collectionName).update(
-    { _id: eventId },
+app.put('/api/:collectionName/:id/edit/:userId', (req, res) => {
+  logger('body', req.body);
+  db.collection(req.params.collectionName).updateOne(
+    { eventId: req.params.id, userId: req.body.userId },
     {
-      $push: {
-        attendees: {
-          name: req.body.name,
-          id: req.body.id,
-          procurementLink: req.body.procurementLink,
-          approved: req.body.approved,
-        },
+      $set: {
+        eventId: req.body.eventId,
+        userId: req.body.userId,
+        name: req.body.name,
+        procurementLink: req.body.procurementLink,
+        approved: req.body.approved,
       },
     },
-    () => {
+    result => {
       db
         .collection(req.params.collectionName)
-        .find({ _id: eventId })
-        .limit(1)
-        .next()
-        .then(savedEvent => {
-          logger(savedEvent);
-          res.json(savedEvent);
-        })
-        .catch(err => {
-          logger('error', err);
-          res.status.json({ message: `Error: ${err}` });
+        .findOne({ eventId: req.params.id, userId: req.body.userId })
+        .then(attendee => {
+          logger('updatedAttendee: ', attendee);
+          res.json(attendee);
+        });
+    }
+  );
+});
+
+/**
+ * adding event to collection
+ */
+app.put('/api/:collectionName/add', (req, res) => {
+  logger('body', req.body);
+  const { name, website, date, city, country, description } = req.body;
+  db.collection(req.params.collectionName).updateOne(
+    {
+      website,
+    },
+    {
+      name,
+      website,
+      date,
+      city,
+      country,
+      description,
+    },
+    { upsert: true },
+    err => {
+      db
+        .collection(req.params.collectionName)
+        .findOne({ website })
+        .then(responseEvent => {
+          logger('response', responseEvent);
+          res.json(responseEvent);
+        });
+    }
+  );
+});
+
+/**
+ * updating attendee collection
+ */
+app.put('/api/:collectionName/:id', (req, res) => {
+  logger('body', req.body);
+  db.collection(req.params.collectionName).updateOne(
+    {
+      eventId: req.body.eventId,
+      userId: req.body.userId,
+    },
+    {
+      eventId: req.body.eventId,
+      userId: req.body.userId,
+      name: req.body.name,
+      procurementLink: req.body.procurementLink,
+      approved: req.body.approved,
+    },
+    { upsert: true },
+    err => {
+      db
+        .collection(req.params.collectionName)
+        .findOne({ eventId: req.body.eventId, userId: req.body.userId })
+        .then(responseAttendee => {
+          logger('response', responseAttendee);
+          res.json(responseAttendee);
         });
     }
   );
@@ -97,18 +171,29 @@ app.put('/api/:collectionName/:id', (req, res) => {
  * endpoint for edit event attendee page
  */
 app.get('/api/:collectionName/:id/edit/:userId', (req, res) => {
-  const eventId = getMongoId(req.params.id, res);
   db
     .collection(req.params.collectionName)
-    // find the matching event and return it's attendees array
-    .findOne({ _id: eventId }, { attendees: 1 })
-    .then(event => {
-      // filter the attendees array for the attendee to be edited
-      const matchingAttendee = event.attendees.filter(
-        attendee => attendee.id === req.params.userId,
-      );
-      logger('sending', matchingAttendee);
-      res.json({ ...matchingAttendee[0] });
+    // find the attendee to edit
+    .findOne({ eventId: req.params.id, userId: req.params.userId })
+    .then(attendee => {
+      logger('sending', attendee);
+      res.json({ attendee });
+    });
+});
+
+/**
+ * endpoint for event attendees
+ */
+app.get('/api/attendees/:id', (req, res) => {
+  db
+    .collection('attendees')
+    .find({
+      eventId: req.params.id,
+    })
+    .toArray()
+    .then(attendees => {
+      logger('attendees', attendees);
+      res.json({ attendees });
     });
 });
 

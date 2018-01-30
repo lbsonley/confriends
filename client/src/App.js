@@ -8,7 +8,10 @@
 import React, { Component } from 'react';
 
 // react extensions
-import { Router, Route, Redirect } from 'react-router-dom';
+import { Router, Route, Redirect, Switch } from 'react-router-dom';
+
+// utilities
+import bows from 'bows';
 
 // my components
 import ListContainer from './Containers/ListContainer/ListContainer';
@@ -18,8 +21,9 @@ import Callback from './Auth/Callback';
 import Dummy from './Components/Dummy';
 import Header from './Components/Header/Header';
 import UpdateAttendeeForm from './Components/UpdateAttendeeForm/UpdateAttendeeForm';
+import AddEventForm from './Components/AddEventForm/AddEventForm';
 
-// utils
+// my utils
 import Auth from './Auth/Auth';
 import history from './Assets/js/utils/history';
 
@@ -30,7 +34,27 @@ import './App.css';
 const auth = new Auth();
 
 class App extends Component {
+  componentWillMount = () => {
+    this.setState({ profile: {} });
+    const { userProfile, getProfileAsync, isAuthenticated } = auth;
+    if (isAuthenticated()) {
+      if (!userProfile) {
+        getProfileAsync()
+          .then(profile => this.setState({ profile }))
+          .catch(err => console.log(err));
+      } else {
+        console.log('using cached profile:', userProfile);
+        this.setState({ profile: userProfile });
+      }
+    } else {
+      this.logger('log in to fetch profile');
+    }
+  };
+
   login = () => {
+    if (localStorage) {
+      localStorage.setItem('forwardEvent', window.location.pathname);
+    }
     auth.login();
   };
 
@@ -38,28 +62,29 @@ class App extends Component {
     auth.logout();
   };
 
+  requireAuth = () => {
+    auth.requireAuth();
+  };
+
   handleAuthentication = (nextState /* , replace */) => {
     if (/access_token|id_token|error/.test(nextState.location.hash)) {
       auth
         .handleAuthentication()
+        .then(() => {
+          const redirectPath = localStorage.getItem('forwardEvent');
+          if (redirectPath) {
+            history.push(redirectPath);
+            localStorage.removeItem('forwardEvent');
+          }
+        })
         .then(auth.getProfileAsync)
         .then(profile => this.setState({ profile }))
+
         .catch(err => console.log(err));
     }
   };
 
-  componentWillMount = () => {
-    this.setState({ profile: {} });
-    const { userProfile, getProfileAsync } = auth;
-    if (!userProfile) {
-      getProfileAsync()
-        .then(profile => this.setState({ profile }))
-        .catch(err => console.log(err));
-    } else {
-      console.log('using cached profile:', userProfile);
-      this.setState({ profile: userProfile });
-    }
-  };
+  logger = bows('App');
 
   render() {
     return (
@@ -93,33 +118,33 @@ class App extends Component {
             }
           </Media> */}
 
-          <section className="app-content">
+          <section>
+            <Switch>
+              <Redirect from="/" exact to="/conferences" /> />
+            </Switch>
             <Route exact path="/dummy" component={Dummy} />
             <Route
               exact
               path="/conferences"
-              onEnter={auth.requireAuth}
-              render={props => (
-                <ListContainer auth={auth} listName="conferences" {...props} />
-              )}
-            />
-            <Route
-              exact
-              path="/team-building"
               render={props => (
                 <ListContainer
-                  auth={auth}
-                  listName="team-building"
+                  getAccessToken={auth.getAccessToken}
+                  isAuthenticated={auth.isAuthenticated}
+                  listName="conferences"
                   {...props}
                 />
               )}
             />
+            <Route exact path="/add-event" component={AddEventForm} />
             <Route
               exact
               path="/:collectionName/:id"
               render={props => (
                 <ConferenceDetailsContainer
-                  auth={auth}
+                  getIdToken={auth.getIdToken}
+                  setupUserManagementAPI={auth.setupUserManagementAPI}
+                  isAuthenticated={auth.isAuthenticated}
+                  onLoginClick={this.login}
                   profile={this.state.profile}
                   {...props}
                 />
@@ -128,11 +153,7 @@ class App extends Component {
             <Route
               path="/:collectionName/:id/edit/:userId"
               render={props => (
-                <UpdateAttendeeForm
-                  auth={auth}
-                  profile={this.state.profile}
-                  {...props}
-                />
+                <UpdateAttendeeForm profile={this.state.profile} {...props} />
               )}
             />
             <Route

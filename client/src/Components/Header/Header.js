@@ -18,7 +18,6 @@ import Button from 'material-ui/Button';
 // my components
 import NavMain from '../NavMain/NavMain';
 import NavUser from '../NavUser/NavUser';
-// import Button from '../Button/Button';
 
 // css
 import './Header.css';
@@ -29,14 +28,17 @@ const Login = ({ onLoginClick }) => (
   </Button>
 );
 
-const styles = {
+const styles = theme => ({
   bigFlex: {
     flex: 1,
   },
-};
+  header: {
+    marginBottom: theme.spacing.unit * 3,
+  },
+});
 
 const Header = ({ isAuthenticated, onLoginClick, onLogoutClick, classes }) => (
-  <AppBar position="static">
+  <AppBar position="static" className={classes.header}>
     <Toolbar>
       <NavMain />
       <Typography type="title" color="inherit" className={classes.bigFlex}>

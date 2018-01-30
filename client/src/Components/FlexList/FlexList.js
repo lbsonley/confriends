@@ -6,99 +6,17 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 // material ui
+import { withStyles } from 'material-ui/styles';
+import Grid from 'material-ui/Grid';
+import Typography from 'material-ui/Typography';
 import Card, { CardHeader, CardContent } from 'material-ui/Card';
+import Button from 'material-ui/Button';
+import AddIcon from 'material-ui-icons/Add';
 
+import VisualListItem from './ListItem';
 import './FlexList.css';
 
-const VisualListItem = props => {
-  const formatDate = dateString => {
-    const dateObj = new Date(dateString);
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-
-    const day = dateObj.getDate();
-    const monthIndex = dateObj.getMonth();
-    const year = dateObj.getFullYear();
-
-    return months[monthIndex]
-      ? `${months[monthIndex]} ${day}, ${year}`
-      : dateString;
-  };
-
-  return (
-    <li className="flex-list__item">
-      <Link
-        to={`/${props.listName}/${props.item._id}`} // eslint-disable-line no-underscore-dangle
-        href={`/${props.listName}/${props.item._id}`} // eslint-disable-line no-underscore-dangle
-      >
-        {/* <div className={props.optionalClass}>
-          {props.item.image && (
-            <div className={`${props.optionalClass}__image`}>
-              <img
-                src={props.item.image}
-                alt="alt"
-                style={{ height: 60, width: 60 }}
-              />
-            </div>
-          )}
-          <div className={`${props.optionalClass}__content`}>
-            <h3 className={`${props.optionalClass}__header`}>
-              {props.item.name}
-            </h3>
-            <p>
-              <span>
-                {props.item.location.city}, {props.item.location.country}
-              </span>
-              <span>{formatDate(props.item.date)}</span>
-            </p>
-          </div>
-        </div> */}
-        <Card>
-          <CardHeader title={props.item.name} />
-          <CardContent>
-            <span>
-              {props.item.location.city}, {props.item.location.country}
-            </span>
-            <span>{formatDate(props.item.date)}</span>
-          </CardContent>
-        </Card>
-      </Link>
-    </li>
-  );
-};
-
-VisualListItem.propTypes = {
-  item: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    location: PropTypes.shape({
-      city: PropTypes.string.isRequired,
-      country: PropTypes.string.isRequired,
-    }).isRequired,
-    date: PropTypes.string.isRequired,
-    image: PropTypes.string,
-  }).isRequired,
-  listName: PropTypes.string.isRequired,
-  optionalClass: PropTypes.string,
-};
-
-VisualListItem.defaultProps = {
-  optionalClass: 'event-teaser',
-};
-
-const FlexList = ({ list, listName }) => {
+const FlexList = ({ list, listName, classes, ...props }) => {
   const listItems = list.map(item => (
     <VisualListItem
       key={item._id} // eslint-disable-line no-underscore-dangle
@@ -108,12 +26,36 @@ const FlexList = ({ list, listName }) => {
     />
   ));
 
-  return <ul className="flex-list">{listItems}</ul>;
+  return (
+    <section>
+      <Grid container alignItems="center" style={{ padding: 20 }} spacing={24}>
+        <Grid item xs={8}>
+          <Typography type="display1">Upcoming Events</Typography>
+        </Grid>
+        <Grid item xs={4} style={{ textAlign: 'right' }}>
+          {props.isAuthenticated() ? (
+            <Button raised color="primary" component={Link} to={`/add-event`}>
+              Add an Event
+            </Button>
+          ) : null}
+        </Grid>
+      </Grid>
+      <Grid container style={{ padding: 20 }} spacing={24}>
+        {listItems}
+      </Grid>
+    </section>
+  );
 };
+
+const styles = theme => ({
+  header: {
+    padding: theme.spacing.unit * 3,
+  },
+});
 
 FlexList.propTypes = {
   listName: PropTypes.string.isRequired,
   list: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-export default FlexList;
+export default withStyles(styles)(FlexList);

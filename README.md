@@ -35,19 +35,26 @@ npm run start:server
 npm run start
 ```
 
-## Reset the database to its original state
+## Database setup and maintenance
 
-After you have updated, added, deleted... from the database, you may want to reset it. The command below will do that.
+### Populate db with dummy data
 
 ```sh
-mongoimport --db events --collection conferences --drop --jsonArray --file ./client/src/Data/conferenceslong.json
+mongoimport --db confriends --collection conferences --jsonArray --file ./client/src/Data/conferenceslong.json
+```
+
+### Reset the database to its original state
+
+```sh
+mongoimport --db confriends --collection conferences --drop --jsonArray --file ./client/src/Data/conferenceslong.json
+```
+
+## Drop a db
+
+```sh
+mongo <dbname> --eval "printjson(db.dropDatabase())"
 ```
 
 ## User Accounts
 
 In order to access certain functionality, you will need to log in to a sample user account. Contact me for account credentials.
-
-## Todo
-
-* Finish CRUD API
-* CSS

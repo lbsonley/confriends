@@ -14,4 +14,12 @@ export default {
   arrayHasValue(array, value) {
     return array.find(item => item.id === value);
   },
+
+  matchUserId(array, value) {
+    return array.find(item => item.userId === value);
+  },
+
+  matchEventId(array, value) {
+    return array.find(item => item.eventId === value);
+  },
 };
