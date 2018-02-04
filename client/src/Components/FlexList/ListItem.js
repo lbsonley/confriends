@@ -48,13 +48,7 @@ const VisualListItem = props => {
   };
 
   return (
-    <Grid
-      item
-      xs={12}
-      sm={6}
-      md={4}
-      className={`flex-list__item ${props.classes.card}`}
-    >
+    <Grid item xs={12} className={`flex-list__item ${props.classes.card}`}>
       <Link
         to={`/${props.listName}/${props.item._id}`} // eslint-disable-line no-underscore-dangle
         href={`/${props.listName}/${props.item._id}`} // eslint-disable-line no-underscore-dangle

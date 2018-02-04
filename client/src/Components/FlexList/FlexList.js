@@ -8,11 +8,11 @@ import { Link } from 'react-router-dom';
 // material ui
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import Card, { CardHeader, CardContent } from 'material-ui/Card';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
 
+// my components
+import PageHeader from '../../Molecules/PageHeader';
 import VisualListItem from './ListItem';
 import './FlexList.css';
 
@@ -27,23 +27,21 @@ const FlexList = ({ list, listName, classes, ...props }) => {
   ));
 
   return (
-    <section>
-      <Grid container alignItems="center" style={{ padding: 20 }} spacing={24}>
-        <Grid item xs={8}>
-          <Typography type="display1">Upcoming Events</Typography>
-        </Grid>
-        <Grid item xs={4} style={{ textAlign: 'right' }}>
+    <div>
+      <PageHeader title="Upcoming Events" />
+      <section className="content">
+        <Grid container style={{ padding: 20 }} spacing={24}>
           {props.isAuthenticated() ? (
-            <Button raised color="primary" component={Link} to={`/add-event`}>
-              Add an Event
-            </Button>
+            <Grid item xs={12} style={{ textAlign: 'right' }}>
+              <Button raised color="primary" component={Link} to="/add-event">
+                Add an Event
+              </Button>
+            </Grid>
           ) : null}
+          {listItems}
         </Grid>
-      </Grid>
-      <Grid container style={{ padding: 20 }} spacing={24}>
-        {listItems}
-      </Grid>
-    </section>
+      </section>
+    </div>
   );
 };
 

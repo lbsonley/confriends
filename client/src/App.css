@@ -16,6 +16,23 @@ body {
   grid-template-rows: [top-edge] 8px [header-row-start] 70px [header-row-end] auto [main-row-end] 8px [bottom-edge]; */
 }
 
+.content {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+@media screen and (min-width: 60rem) {
+  .content {
+    width: 80%;
+  }
+}
+@media screen and (min-width: 80rem) {
+  .content {
+    width: 70%;
+  }
+}
+
 .app-content {
   /* grid-column-start: main-column-start;
   grid-column-end: main-column-end;

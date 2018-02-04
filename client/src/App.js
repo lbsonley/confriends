@@ -118,55 +118,55 @@ class App extends Component {
             }
           </Media> */}
 
-          <section>
-            <Switch>
-              <Redirect from="/" exact to="/conferences" /> />
-            </Switch>
-            <Route exact path="/dummy" component={Dummy} />
-            <Route
-              exact
-              path="/conferences"
-              render={props => (
-                <ListContainer
-                  getAccessToken={auth.getAccessToken}
-                  isAuthenticated={auth.isAuthenticated}
-                  listName="conferences"
-                  {...props}
-                />
-              )}
-            />
-            <Route exact path="/add-event" component={AddEventForm} />
-            <Route
-              exact
-              path="/:collectionName/:id"
-              render={props => (
-                <ConferenceDetailsContainer
-                  getIdToken={auth.getIdToken}
-                  setupUserManagementAPI={auth.setupUserManagementAPI}
-                  isAuthenticated={auth.isAuthenticated}
-                  onLoginClick={this.login}
-                  profile={this.state.profile}
-                  {...props}
-                />
-              )}
-            />
-            <Route
-              path="/:collectionName/:id/edit/:userId"
-              render={props => (
-                <UpdateAttendeeForm profile={this.state.profile} {...props} />
-              )}
-            />
-            <Route
-              path="/profile"
-              render={props =>
-                auth.isAuthenticated() ? (
-                  <Profile profile={this.state.profile} {...props} />
-                ) : (
-                  <Redirect to="/" />
-                )
-              }
-            />
-          </section>
+          <Switch>
+            <Redirect from="/" exact to="/conferences" />
+          </Switch>
+          <Route exact path="/dummy" component={Dummy} />
+          {/* <section className="content"> */}
+          <Route
+            exact
+            path="/conferences"
+            render={props => (
+              <ListContainer
+                getAccessToken={auth.getAccessToken}
+                isAuthenticated={auth.isAuthenticated}
+                listName="conferences"
+                {...props}
+              />
+            )}
+          />
+          <Route exact path="/add-event" component={AddEventForm} />
+          <Route
+            exact
+            path="/:collectionName/:id"
+            render={props => (
+              <ConferenceDetailsContainer
+                getIdToken={auth.getIdToken}
+                setupUserManagementAPI={auth.setupUserManagementAPI}
+                isAuthenticated={auth.isAuthenticated}
+                onLoginClick={this.login}
+                profile={this.state.profile}
+                {...props}
+              />
+            )}
+          />
+          <Route
+            path="/:collectionName/:id/:userId"
+            render={props => (
+              <UpdateAttendeeForm profile={this.state.profile} {...props} />
+            )}
+          />
+          <Route
+            path="/profile"
+            render={props =>
+              auth.isAuthenticated() ? (
+                <Profile profile={this.state.profile} {...props} />
+              ) : (
+                <Redirect to="/" />
+              )
+            }
+          />
+          {/* </section> */}
         </div>
       </Router>
     );

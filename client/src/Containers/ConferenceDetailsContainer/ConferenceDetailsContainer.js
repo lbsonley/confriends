@@ -18,6 +18,7 @@ import Card, { CardActions, CardContent } from 'material-ui/Card';
 // my components
 import { Provider } from '../Provider/Provider';
 import AttendeeList from '../../Components/AttendeeList/AttendeeList';
+import PageHeader from '../../Molecules/PageHeader';
 
 import logic from '../../Assets/js/utils/logicHelpers';
 
@@ -222,84 +223,79 @@ class ConferenceDetailsContainer extends Component {
 
   render() {
     return (
-      <div className="twocolumn">
-        <Typography type="display2" className={this.props.classes.card}>
-          {this.state.event.name}
-        </Typography>
-        <Grid container style={{ padding: 24 }} spacing={48}>
-          <Grid item xs={12}>
-            <Typography type="headline" gutterBottom>
-              Details
-            </Typography>
-            <Typography type="body1">
-              {this.state.event.city}, {this.state.event.country}
-            </Typography>
-            <Typography type="body1">{this.state.event.date}</Typography>
-            <Button
-              color="primary"
-              type="body1"
-              href={this.state.event.website}
-              target="_blank"
-              className={classNames({
-                [this.props.classes.gutterBottom]: true,
-                [this.props.classes.link]: true,
-              })}
-            >
-              {this.state.event.website}
-            </Button>
-          </Grid>
-          {this.state.event.description ? (
+      <div>
+        <PageHeader title={this.state.event.name} />
+        <section className="content">
+          <Grid container style={{ padding: 20 }} spacing={40}>
             <Grid item xs={12}>
               <Typography type="headline" gutterBottom>
-                Description
+                Details
               </Typography>
-              <Typography
+              <Typography type="body1">
+                {this.state.event.city}, {this.state.event.country}
+              </Typography>
+              <Typography type="body1">{this.state.event.date}</Typography>
+              <Button
+                color="primary"
                 type="body1"
-                className={this.props.classes.gutterBottom}
+                href={this.state.event.website}
+                target="_blank"
+                className={this.props.classes.link}
               >
-                {this.state.event.description}
-              </Typography>
+                {this.state.event.website}
+              </Button>
             </Grid>
-          ) : null}
-        </Grid>
-        <section className={this.props.classes.card}>
-          {this.props.isAuthenticated() ? (
-            <div>
-              <Provider
-                // eslint-disable-next-line no-underscore-dangle
-                eventId={this.state.event._id}
-                collectionName={this.props.match.params.collectionName}
-                isAuthenticated={this.props.isAuthenticated}
-                removeAttendee={this.removeAttendee}
-              >
-                <AttendeeList attendees={this.state.attendees} />
-              </Provider>
-              <Button
-                className={this.props.classes.button}
-                style={{ padding: 16 }}
-                raised
-                color="primary"
-                onClick={this.validateUserAttend}
-              >
-                Attend
-              </Button>
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center' }}>
-              <Typography align="center" type="subheading" gutterBottom>
-                Want to attend this conference?
-              </Typography>
-              <Button
-                className={this.props.classes.button}
-                style={{ padding: 24 }}
-                raised
-                color="primary"
-                onClick={this.props.onLoginClick}
-              >
-                Login to get started
-              </Button>
-            </div>
-          )}
+            {this.state.event.description ? (
+              <Grid item xs={12} style={{ marginTop: 24 }}>
+                <Typography type="headline" gutterBottom>
+                  Description
+                </Typography>
+                <Typography
+                  type="body1"
+                  className={this.props.classes.gutterBottom}
+                >
+                  {this.state.event.description}
+                </Typography>
+              </Grid>
+            ) : null}
+          </Grid>
+          <section className={this.props.classes.card}>
+            {this.props.isAuthenticated() ? (
+              <div>
+                <Provider
+                  // eslint-disable-next-line no-underscore-dangle
+                  eventId={this.state.event._id}
+                  collectionName={this.props.match.params.collectionName}
+                  isAuthenticated={this.props.isAuthenticated}
+                  removeAttendee={this.removeAttendee}
+                >
+                  <AttendeeList attendees={this.state.attendees} />
+                </Provider>
+                <Button
+                  className={this.props.classes.medium}
+                  raised
+                  color="primary"
+                  onClick={this.validateUserAttend}
+                >
+                  Attend
+                </Button>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center' }}>
+                <Typography align="center" type="subheading" gutterBottom>
+                  Want to attend this conference?
+                </Typography>
+                <Button
+                  raised
+                  className={this.props.classes.big}
+                  color="primary"
+                  onClick={this.props.onLoginClick}
+                >
+                  Login to get started
+                </Button>
+              </div>
+            )}
+          </section>
         </section>
       </div>
     );
@@ -316,7 +312,14 @@ const styles = theme => ({
   gutterBottom: {
     marginBottom: theme.spacing.unit * 5,
   },
+  big: {
+    padding: 24,
+  },
+  medium: {
+    padding: 16,
+  },
   link: {
+    marginTop: 0,
     paddingLeft: 0,
     textTransform: 'lowercase',
   },
@@ -339,6 +342,12 @@ ConferenceDetailsContainer.propTypes = {
   getIdToken: PropTypes.func.isRequired,
   setupUserManagementAPI: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.func.isRequired,
+  classes: PropTypes.shape({
+    card: PropTypes.string.isRequired,
+    button: PropTypes.string.isRequired,
+    gutterBottom: PropTypes.string.isRequired,
+    link: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default withStyles(styles)(ConferenceDetailsContainer);

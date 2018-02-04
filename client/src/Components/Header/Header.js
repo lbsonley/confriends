@@ -33,12 +33,13 @@ const styles = theme => ({
     flex: 1,
   },
   header: {
-    marginBottom: theme.spacing.unit * 3,
+    // height: 80,
+    // marginBottom: theme.spacing.unit * 1.25,
   },
 });
 
 const Header = ({ isAuthenticated, onLoginClick, onLogoutClick, classes }) => (
-  <AppBar position="static" className={classes.header}>
+  <AppBar className={classes.header}>
     <Toolbar>
       <NavMain />
       <Typography type="title" color="inherit" className={classes.bigFlex}>
