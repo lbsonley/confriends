@@ -21,6 +21,7 @@ import AttendeeList from '../../Components/AttendeeList/AttendeeList';
 import PageHeader from '../../Molecules/PageHeader';
 
 import logic from '../../Assets/js/utils/logicHelpers';
+import history from '../../Assets/js/utils/history';
 
 const querystring = require('querystring');
 
@@ -41,6 +42,7 @@ class ConferenceDetailsContainer extends Component {
     this.checkUsersEventList = this.checkUsersEventList.bind(this);
     this.validateUserAttend = this.validateUserAttend.bind(this);
     this.removeAttendee = this.removeAttendee.bind(this);
+    this.handleDeleteEvent = this.handleDeleteEvent.bind(this);
 
     this.logger = bows('ConferenceDetailsContainer');
   }
@@ -221,6 +223,30 @@ class ConferenceDetailsContainer extends Component {
     this.checkUsersEventList();
   }
 
+  /**
+   * handleDeleteEvent
+   * @description send delete operation to server to remove event and it's attendees
+   */
+  handleDeleteEvent() {
+    // eslint-disable-next-line no-underscore-dangle
+    fetch(`/api/attendees/${this.state.event._id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(response => response.json())
+      .then(data => this.logger(data));
+
+    // eslint-disable-next-line no-underscore-dangle
+    fetch(`/api/conferences/${this.state.event._id}`, {
+      method: 'DELETE',
+      header: { 'Content-Type': 'application/json' },
+    })
+      .then(response => response.json())
+      .then(data => this.logger(data));
+
+    history.push('/');
+  }
+
   render() {
     return (
       <div>
@@ -246,13 +272,14 @@ class ConferenceDetailsContainer extends Component {
               </Button>
             </Grid>
             {this.state.event.description ? (
-              <Grid item xs={12} style={{ marginTop: 24 }}>
+              <Grid item xs={12}>
                 <Typography type="headline" gutterBottom>
                   Description
                 </Typography>
                 <Typography
                   type="body1"
-                  className={this.props.classes.gutterBottom}
+                  paragraph
+                  // className={this.props.classes.gutterBottom}
                 >
                   {this.state.event.description}
                 </Typography>
@@ -296,6 +323,13 @@ class ConferenceDetailsContainer extends Component {
               </div>
             )}
           </section>
+          <Grid container style={{ padding: 20 }} spacing={40}>
+            <Grid item xs={12}>
+              <Button raised color="secondary" onClick={this.handleDeleteEvent}>
+                Delete event
+              </Button>
+            </Grid>
+          </Grid>
         </section>
       </div>
     );

@@ -63,7 +63,7 @@ class UpdateAttendeeForm extends Component {
   saveAttendeeInfo = () => {
     const { eventId, userId, name, procurementLink, approved } = this.state;
     fetch(
-      `/api/attendees/${this.props.match.params.id}/edit/${
+      `/api/attendees/${this.props.match.params.id}/${
         this.props.match.params.userId
       }`,
       {

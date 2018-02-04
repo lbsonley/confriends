@@ -53,136 +53,27 @@ const getMongoId = (idString, res) => {
   }
 };
 
-// ** Delete API **
-/**
- * delete an attendee
- */
-app.delete('/api/:collectionName/delete', (req, res) => {
-  logger('body', req.body);
-  const { eventId, userId } = req.body;
+const deleteConferenceAttendees = (req, res) => {
   db
     .collection(req.params.collectionName)
-    .findOneAndDelete({ eventId, userId }, err => {
-      db
-        .collection(req.params.collectionName)
-        .find({ eventId })
-        .toArray()
-        .then(attendees => {
-          logger('attendees', attendees);
-          res.json({ attendees });
-        });
+    .deleteMany({ eventId: req.params.eventId })
+    .then(attendees => {
+      logger('deleteConferenceAttendees');
+      res.json({ attendees });
     });
-});
+};
 
-// ** Create API **
+const deleteConference = (req, res) => {
+  const eventId = getMongoId(req.params.eventId);
 
-/**
- * updating an event's attendee with new approval info
- */
-app.put('/api/:collectionName/:id/edit/:userId', (req, res) => {
-  logger('body', req.body);
-  db.collection(req.params.collectionName).updateOne(
-    { eventId: req.params.id, userId: req.body.userId },
-    {
-      $set: {
-        eventId: req.body.eventId,
-        userId: req.body.userId,
-        name: req.body.name,
-        procurementLink: req.body.procurementLink,
-        approved: req.body.approved,
-      },
-    },
-    result => {
-      db
-        .collection(req.params.collectionName)
-        .findOne({ eventId: req.params.id, userId: req.body.userId })
-        .then(attendee => {
-          logger('updatedAttendee: ', attendee);
-          res.json(attendee);
-        });
-    }
-  );
-});
-
-/**
- * adding event to collection
- */
-app.put('/api/:collectionName', (req, res) => {
-  logger('body', req.body);
-  const { name, website, date, city, country, description } = req.body;
-  db.collection(req.params.collectionName).updateOne(
-    {
-      website,
-    },
-    {
-      name,
-      website,
-      date,
-      city,
-      country,
-      description,
-    },
-    { upsert: true },
-    err => {
-      db
-        .collection(req.params.collectionName)
-        .findOne({ website })
-        .then(responseEvent => {
-          logger('response', responseEvent);
-          res.json(responseEvent);
-        });
-    }
-  );
-});
-
-/**
- * updating attendee collection
- */
-app.put('/api/:collectionName/:id', (req, res) => {
-  logger('body', req.body);
-  db.collection(req.params.collectionName).updateOne(
-    {
-      eventId: req.body.eventId,
-      userId: req.body.userId,
-    },
-    {
-      eventId: req.body.eventId,
-      userId: req.body.userId,
-      name: req.body.name,
-      procurementLink: req.body.procurementLink,
-      approved: req.body.approved,
-    },
-    { upsert: true },
-    err => {
-      db
-        .collection(req.params.collectionName)
-        .findOne({ eventId: req.body.eventId, userId: req.body.userId })
-        .then(responseAttendee => {
-          logger('response', responseAttendee);
-          res.json(responseAttendee);
-        });
-    }
-  );
-});
-
-// ** Read API **
-
-/**
- * endpoint for edit attendee page
- * each event attendee has a unique
- * entry in the database so we have to
- * filter on eventId and userId
- */
-app.get('/api/:collectionName/:eventId/:userId', (req, res) => {
   db
     .collection(req.params.collectionName)
-    // find the attendee to edit
-    .findOne({ eventId: req.params.eventId, userId: req.params.userId })
-    .then(attendee => {
-      logger('sending', attendee);
-      res.json({ attendee });
+    .deleteOne({ _id: eventId })
+    .then(event => {
+      logger('deleteConference');
+      res.json({ event });
     });
-});
+};
 
 const getEventAttendees = (req, res) => {
   const { params } = req;
@@ -216,8 +107,142 @@ const getOneEvent = (req, res) => {
 };
 
 /**
- * endpoint for event detail page
+ * Delete API
  */
+
+// delete an attendee
+app.delete('/api/:collectionName/:eventId/:userId', (req, res) => {
+  const { eventId, userId } = req.params;
+  db
+    .collection(req.params.collectionName)
+    .findOneAndDelete({ eventId, userId }, err => {
+      db
+        .collection(req.params.collectionName)
+        .find({ eventId })
+        .toArray()
+        .then(attendees => {
+          logger('attendees after delete', attendees);
+          res.json({ attendees });
+        });
+    });
+});
+
+// delete a conference
+app.delete('/api/:collectionName/:eventId', (req, res) => {
+  if (req.params.collectionName === 'attendees') {
+    deleteConferenceAttendees(req, res);
+  } else if (req.params.collectionName === 'conferences') {
+    deleteConference(req, res);
+  }
+});
+
+/**
+ * Create API
+ */
+
+// updating an event's attendee with new approval info
+app.put('/api/:collectionName/:eventId/:userId', (req, res) => {
+  logger('body', req.body);
+  db.collection(req.params.collectionName).updateOne(
+    { eventId: req.params.eventId, userId: req.body.userId },
+    {
+      $set: {
+        eventId: req.body.eventId,
+        userId: req.body.userId,
+        name: req.body.name,
+        procurementLink: req.body.procurementLink,
+        approved: req.body.approved,
+      },
+    },
+    result => {
+      db
+        .collection(req.params.collectionName)
+        .findOne({ eventId: req.params.eventId, userId: req.body.userId })
+        .then(attendee => {
+          logger('updatedAttendee: ', attendee);
+          res.json(attendee);
+        });
+    }
+  );
+});
+
+// adding event to collection
+app.put('/api/:collectionName', (req, res) => {
+  logger('body', req.body);
+  const { name, website, date, city, country, description } = req.body;
+  db.collection(req.params.collectionName).updateOne(
+    {
+      website,
+    },
+    {
+      name,
+      website,
+      date,
+      city,
+      country,
+      description,
+    },
+    { upsert: true },
+    err => {
+      db
+        .collection(req.params.collectionName)
+        .findOne({ website })
+        .then(responseEvent => {
+          logger('response', responseEvent);
+          res.json(responseEvent);
+        });
+    }
+  );
+});
+
+// updating attendee collection
+app.put('/api/:collectionName/:id', (req, res) => {
+  logger('body', req.body);
+  db.collection(req.params.collectionName).updateOne(
+    {
+      eventId: req.body.eventId,
+      userId: req.body.userId,
+    },
+    {
+      eventId: req.body.eventId,
+      userId: req.body.userId,
+      name: req.body.name,
+      procurementLink: req.body.procurementLink,
+      approved: req.body.approved,
+    },
+    { upsert: true },
+    err => {
+      db
+        .collection(req.params.collectionName)
+        .findOne({ eventId: req.body.eventId, userId: req.body.userId })
+        .then(responseAttendee => {
+          logger('response', responseAttendee);
+          res.json(responseAttendee);
+        });
+    }
+  );
+});
+
+/**
+ * Read API
+ */
+
+// endpoint for edit attendee page
+// each event attendee has a unique
+// entry in the database so we have to
+// filter on eventId and userId
+app.get('/api/:collectionName/:eventId/:userId', (req, res) => {
+  db
+    .collection(req.params.collectionName)
+    // find the attendee to edit
+    .findOne({ eventId: req.params.eventId, userId: req.params.userId })
+    .then(attendee => {
+      logger('sending', attendee);
+      res.json({ attendee });
+    });
+});
+
+// endpoint for event detail page
 app.get('/api/:collectionName/:id', (req, res) => {
   if (req.params.collectionName === 'conferences') {
     getOneEvent(req, res);
@@ -226,9 +251,7 @@ app.get('/api/:collectionName/:id', (req, res) => {
   }
 });
 
-/**
- * endpoint for a list of events
- */
+// endpoint for a list of events
 app.get('/api/:collectionName', (req, res) => {
   db
     .collection(req.params.collectionName)
