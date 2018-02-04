@@ -107,7 +107,7 @@ app.put('/api/:collectionName/:id/edit/:userId', (req, res) => {
 /**
  * adding event to collection
  */
-app.put('/api/:collectionName/add', (req, res) => {
+app.put('/api/:collectionName', (req, res) => {
   logger('body', req.body);
   const { name, website, date, city, country, description } = req.body;
   db.collection(req.params.collectionName).updateOne(
@@ -168,49 +168,62 @@ app.put('/api/:collectionName/:id', (req, res) => {
 // ** Read API **
 
 /**
- * endpoint for edit event attendee page
+ * endpoint for edit attendee page
+ * each event attendee has a unique
+ * entry in the database so we have to
+ * filter on eventId and userId
  */
-app.get('/api/:collectionName/:id/edit/:userId', (req, res) => {
+app.get('/api/:collectionName/:eventId/:userId', (req, res) => {
   db
     .collection(req.params.collectionName)
     // find the attendee to edit
-    .findOne({ eventId: req.params.id, userId: req.params.userId })
+    .findOne({ eventId: req.params.eventId, userId: req.params.userId })
     .then(attendee => {
       logger('sending', attendee);
       res.json({ attendee });
     });
 });
 
-/**
- * endpoint for event attendees
- */
-app.get('/api/attendees/:id', (req, res) => {
+const getEventAttendees = (req, res) => {
+  const { params } = req;
+
   db
     .collection('attendees')
     .find({
-      eventId: req.params.id,
+      eventId: params.id,
     })
     .toArray()
     .then(attendees => {
-      logger('attendees', attendees);
+      logger('getEventAttendees response', attendees);
       res.json({ attendees });
     });
-});
+};
+
+const getOneEvent = (req, res) => {
+  const { params } = req;
+
+  const eventId = getMongoId(params.id, res);
+
+  db
+    .collection(params.collectionName)
+    .find({ _id: eventId })
+    .limit(1)
+    .next()
+    .then(event => {
+      logger('getOneEvent response', event);
+      res.json({ event });
+    });
+};
 
 /**
  * endpoint for event detail page
  */
 app.get('/api/:collectionName/:id', (req, res) => {
-  const eventId = getMongoId(req.params.id, res);
-
-  db
-    .collection(req.params.collectionName)
-    .find({ _id: eventId })
-    .limit(1)
-    .next()
-    .then(event => {
-      res.json({ event });
-    });
+  if (req.params.collectionName === 'conferences') {
+    getOneEvent(req, res);
+  } else if (req.params.collectionName === 'attendees') {
+    getEventAttendees(req, res);
+  }
 });
 
 /**

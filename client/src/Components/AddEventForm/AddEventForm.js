@@ -19,6 +19,12 @@ import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
 
+// my utils
+import history from '../../Assets/js/utils/history';
+
+// my components
+import PageHeader from '../../Molecules/PageHeader';
+
 class AddEventForm extends Component {
   state = {
     name: '',
@@ -33,7 +39,7 @@ class AddEventForm extends Component {
 
   saveEvent = () => {
     const { name, city, country, date, website, description } = this.state;
-    fetch(`/api/conferences/add`, {
+    fetch(`/api/conferences`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -61,6 +67,7 @@ class AddEventForm extends Component {
           country: data.country,
           description: data.description,
         });
+        history.push(`/conferences/${data._id}`); // eslint-disable-line
       })
       .catch(err => this.logger('Error fetching attendees:', err));
   };
@@ -76,84 +83,84 @@ class AddEventForm extends Component {
 
     return (
       <div>
-        <form noValidate autoComplete="off">
-          <Grid container style={{ padding: 20 }} spacing={24}>
-            <Grid item xs={12}>
-              <Typography type="headline">Add Event</Typography>
+        <PageHeader title="Add Event" />
+        <section className="content">
+          <form noValidate autoComplete="off">
+            <Grid container style={{ padding: 20 }} spacing={24}>
+              <Grid item xs={12} sm={8}>
+                <TextField
+                  id="name"
+                  name="name"
+                  label="Event Name"
+                  className={classes.textField}
+                  value={this.state.name}
+                  onChange={this.handleTextInputChange}
+                  margin="none"
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  id="date"
+                  name="date"
+                  label="Date"
+                  className={classes.textField}
+                  value={this.state.date}
+                  onChange={this.handleTextInputChange}
+                  margin="none"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="city"
+                  name="city"
+                  label="City"
+                  className={classes.textField}
+                  value={this.state.city}
+                  onChange={this.handleTextInputChange}
+                  margin="none"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="country"
+                  name="country"
+                  label="Country"
+                  className={classes.textField}
+                  value={this.state.country}
+                  onChange={this.handleTextInputChange}
+                  margin="none"
+                />
+              </Grid>
+              <Grid item xs={8}>
+                <TextField
+                  id="website"
+                  name="website"
+                  label="Website"
+                  className={classes.textField}
+                  value={this.state.website}
+                  onChange={this.handleTextInputChange}
+                  margin="none"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  id="description"
+                  name="description"
+                  label="Description"
+                  className={classes.textField}
+                  value={this.state.description}
+                  onChange={this.handleTextInputChange}
+                  margin="none"
+                />
+              </Grid>
+              <Grid style={{ textAlign: 'right' }} item xs={12}>
+                <Button raised color="primary" onClick={this.saveEvent}>
+                  Save
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={8}>
-              <TextField
-                id="name"
-                name="name"
-                label="Event Name"
-                className={classes.textField}
-                value={this.state.name}
-                onChange={this.handleTextInputChange}
-                margin="none"
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                id="date"
-                name="date"
-                label="Date"
-                className={classes.textField}
-                value={this.state.date}
-                onChange={this.handleTextInputChange}
-                margin="none"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="city"
-                name="city"
-                label="City"
-                className={classes.textField}
-                value={this.state.city}
-                onChange={this.handleTextInputChange}
-                margin="none"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="country"
-                name="country"
-                label="Country"
-                className={classes.textField}
-                value={this.state.country}
-                onChange={this.handleTextInputChange}
-                margin="none"
-              />
-            </Grid>
-            <Grid item xs={8}>
-              <TextField
-                id="website"
-                name="website"
-                label="Website"
-                className={classes.textField}
-                value={this.state.website}
-                onChange={this.handleTextInputChange}
-                margin="none"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                id="description"
-                name="description"
-                label="Description"
-                className={classes.textField}
-                value={this.state.description}
-                onChange={this.handleTextInputChange}
-                margin="none"
-              />
-            </Grid>
-            <Grid style={{ textAlign: 'right' }} item xs={12}>
-              <Button raised color="primary" onClick={this.saveEvent}>
-                Save
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
+          </form>
+        </section>
       </div>
     );
   }

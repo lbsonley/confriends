@@ -29,7 +29,7 @@ class UpdateAttendeeForm extends Component {
 
   componentDidMount() {
     fetch(
-      `/api/attendees/${this.props.match.params.id}/edit/${
+      `/api/attendees/${this.props.match.params.id}/${
         this.props.match.params.userId
       }`,
     )
