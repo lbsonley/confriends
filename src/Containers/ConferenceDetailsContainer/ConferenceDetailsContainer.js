@@ -322,17 +322,19 @@ class ConferenceDetailsContainer extends Component {
               </div>
             )}
           </section>
-          <Grid container style={{ padding: 20 }} spacing={40}>
-            <Grid item xs={12}>
-              <Button
-                variant="raised"
-                color="secondary"
-                onClick={this.handleDeleteEvent}
-              >
-                Delete event
-              </Button>
+          {this.props.isAuthenticated() ? (
+            <Grid container style={{ padding: 20 }} spacing={40}>
+              <Grid item xs={12}>
+                <Button
+                  variant="raised"
+                  color="secondary"
+                  onClick={this.handleDeleteEvent}
+                >
+                  Delete event
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
+          ) : null}
         </section>
       </div>
     );
