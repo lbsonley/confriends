@@ -12,11 +12,19 @@ require('dotenv').config();
 
 const app = express();
 let db;
+const port = process.env.PORT || 3001;
+console.log('isprod', process.env.PROD);
+console.log('MLAB_ENV', process.env.MLAB_URI);
 
-MongoClient.connect('mongodb://localhost/confriends')
+const mongoUri = process.env.PROD
+  ? process.env.MLAB_URI
+  : 'mongodb://localhost/confriends';
+
+console.log('dbURI', mongoUri);
+MongoClient.connect(mongoUri)
   .then(connection => {
-    db = connection;
-    app.listen(3001, () => logger('running on port 3001'));
+    db = connection.db('confriends');
+    app.listen(port, () => logger(`running on port ${port}`));
   })
   .catch(err => logger('Error connecting to DB:', err));
 
@@ -25,7 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, '..', 'build')));
 
 // eslint-disable-next-line no-unused-vars
 const authCheck = jwt({
@@ -213,12 +221,14 @@ app.put('/api/:collectionName', (req, res) => {
     },
     // data to update
     {
-      name,
-      website,
-      date,
-      city,
-      country,
-      description,
+      $set: {
+        name,
+        website,
+        date,
+        city,
+        country,
+        description,
+      },
     },
     // options
     { upsert: true },
@@ -249,11 +259,13 @@ app.put('/api/:collectionName/:id', (req, res) => {
       userId: req.body.userId,
     },
     {
-      eventId: req.body.eventId,
-      userId: req.body.userId,
-      name: req.body.name,
-      procurementLink: req.body.procurementLink,
-      approved: req.body.approved,
+      $set: {
+        eventId: req.body.eventId,
+        userId: req.body.userId,
+        name: req.body.name,
+        procurementLink: req.body.procurementLink,
+        approved: req.body.approved,
+      },
     },
     { upsert: true },
     err => {
@@ -319,5 +331,5 @@ app.get('/api', (req, res) => {
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(`${__dirname}../client/build/index.html`));
+  res.sendFile(path.join(__dirname, '..', `build/index.html`));
 });

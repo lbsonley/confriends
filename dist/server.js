@@ -23,10 +23,16 @@ require('dotenv').config();
 
 const app = (0, _express2.default)();
 let db;
+const port = process.env.PORT || 3001;
+console.log('isprod', process.env.PROD);
+console.log('MLAB_ENV', process.env.MLAB_URI);
 
-_mongodb.MongoClient.connect('mongodb://localhost/confriends').then(connection => {
-  db = connection;
-  app.listen(3001, () => logger('running on port 3001'));
+const mongoUri = process.env.PROD ? process.env.MLAB_URI : 'mongodb://localhost/confriends';
+
+console.log('dbURI', mongoUri);
+_mongodb.MongoClient.connect(mongoUri).then(connection => {
+  db = connection.db('confriends');
+  app.listen(port, () => logger(`running on port ${port}`));
 }).catch(err => logger('Error connecting to DB:', err));
 
 app.use(_bodyParser2.default.json());
@@ -34,7 +40,7 @@ app.use(_bodyParser2.default.urlencoded({ extended: true }));
 app.use(cors());
 
 // Serve static files from the React app
-app.use(_express2.default.static(path.join(__dirname, '../client/build')));
+app.use(_express2.default.static(path.join(__dirname, '..', 'build')));
 
 // eslint-disable-next-line no-unused-vars
 const authCheck = jwt({
@@ -197,12 +203,14 @@ app.put('/api/:collectionName', (req, res) => {
   },
   // data to update
   {
-    name,
-    website,
-    date,
-    city,
-    country,
-    description
+    $set: {
+      name,
+      website,
+      date,
+      city,
+      country,
+      description
+    }
   },
   // options
   { upsert: true },
@@ -227,11 +235,13 @@ app.put('/api/:collectionName/:id', (req, res) => {
     eventId: req.body.eventId,
     userId: req.body.userId
   }, {
-    eventId: req.body.eventId,
-    userId: req.body.userId,
-    name: req.body.name,
-    procurementLink: req.body.procurementLink,
-    approved: req.body.approved
+    $set: {
+      eventId: req.body.eventId,
+      userId: req.body.userId,
+      name: req.body.name,
+      procurementLink: req.body.procurementLink,
+      approved: req.body.approved
+    }
   }, { upsert: true }, err => {
     if (err) {
       logger('Error adding attendee: ', err);
@@ -285,6 +295,6 @@ app.get('/api', (req, res) => {
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(`${__dirname}../client/build/index.html`));
+  res.sendFile(path.join(__dirname, '..', `build/index.html`));
 });
 //# sourceMappingURL=server.js.map

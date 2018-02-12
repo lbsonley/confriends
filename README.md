@@ -40,13 +40,13 @@ npm run start
 ### Populate db with dummy data
 
 ```sh
-mongoimport --db confriends --collection conferences --jsonArray --file ./client/src/Data/conferenceslong.json
+mongoimport --db confriends --collection conferences --jsonArray --file ./src/Data/conferenceslong.json
 ```
 
 ### Reset the database to its original state
 
 ```sh
-mongoimport --db confriends --collection conferences --drop --jsonArray --file ./client/src/Data/conferenceslong.json
+mongoimport --db confriends --collection conferences --drop --jsonArray --file ./src/Data/conferenceslong.json
 ```
 
 ## Drop a db

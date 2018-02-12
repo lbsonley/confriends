@@ -9,6 +9,10 @@
 # database
 /db
 
+# config
+.env
+now.json
+
 # production
 /build
 
