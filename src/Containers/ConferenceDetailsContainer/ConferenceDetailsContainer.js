@@ -254,16 +254,15 @@ class ConferenceDetailsContainer extends Component {
         <section className="content">
           <Grid container style={{ padding: 20 }} spacing={40}>
             <Grid item xs={12}>
-              <Typography type="headline" gutterBottom>
+              <Typography variant="headline" gutterBottom>
                 Details
               </Typography>
-              <Typography type="body1">
+              <Typography variant="body1">
                 {this.state.event.city}, {this.state.event.country}
               </Typography>
-              <Typography type="body1">{this.state.event.date}</Typography>
+              <Typography variant="body1">{this.state.event.date}</Typography>
               <Button
                 color="primary"
-                type="body1"
                 href={this.state.event.website}
                 target="_blank"
                 className={this.props.classes.link}
@@ -273,11 +272,11 @@ class ConferenceDetailsContainer extends Component {
             </Grid>
             {this.state.event.description ? (
               <Grid item xs={12}>
-                <Typography type="headline" gutterBottom>
+                <Typography variant="headline" gutterBottom>
                   Description
                 </Typography>
                 <Typography
-                  type="body1"
+                  variant="body1"
                   paragraph
                   // className={this.props.classes.gutterBottom}
                 >
@@ -300,7 +299,7 @@ class ConferenceDetailsContainer extends Component {
                 </Provider>
                 <Button
                   className={this.props.classes.medium}
-                  raised
+                  variant="raised"
                   color="primary"
                   onClick={this.validateUserAttend}
                 >
@@ -309,11 +308,11 @@ class ConferenceDetailsContainer extends Component {
               </div>
             ) : (
               <div style={{ textAlign: 'center' }}>
-                <Typography align="center" type="subheading" gutterBottom>
+                <Typography align="center" variant="subheading" gutterBottom>
                   Want to attend this conference?
                 </Typography>
                 <Button
-                  raised
+                  variant="raised"
                   className={this.props.classes.big}
                   color="primary"
                   onClick={this.props.onLoginClick}
@@ -325,7 +324,11 @@ class ConferenceDetailsContainer extends Component {
           </section>
           <Grid container style={{ padding: 20 }} spacing={40}>
             <Grid item xs={12}>
-              <Button raised color="accent" onClick={this.handleDeleteEvent}>
+              <Button
+                variant="raised"
+                color="secondary"
+                onClick={this.handleDeleteEvent}
+              >
                 Delete event
               </Button>
             </Grid>

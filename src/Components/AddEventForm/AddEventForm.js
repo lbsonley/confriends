@@ -177,7 +177,11 @@ class AddEventForm extends Component {
                 />
               </Grid>
               <Grid style={{ textAlign: 'right' }} item xs={12}>
-                <Button raised color="primary" onClick={this.saveEvent}>
+                <Button
+                  variant="raised"
+                  color="primary"
+                  onClick={this.saveEvent}
+                >
                   Save
                 </Button>
               </Grid>

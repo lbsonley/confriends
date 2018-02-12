@@ -72,7 +72,7 @@ class Attendee extends Component {
         {props.isAuthenticated() ? (
           <TableCell className={props.classes.centered}>
             <Button
-              fab
+              variant="fab"
               color="primary"
               aria-label="edit"
               component={Link}
@@ -87,8 +87,8 @@ class Attendee extends Component {
         {props.isAuthenticated() ? (
           <TableCell className={props.classes.centered}>
             <Button
-              fab
-              color="accent"
+              variant="fab"
+              color="secondary"
               aria-label="delete"
               onClick={this.handleDelete}
             >

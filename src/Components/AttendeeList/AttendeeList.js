@@ -40,7 +40,7 @@ const AttendeeList = props => {
 
   return (
     <div>
-      <Typography type="headline">Attendee List</Typography>
+      <Typography variant="headline">Attendee List</Typography>
       <Paper className={props.classes.root}>
         <Table className={props.classes.table}>
           <TableHead>

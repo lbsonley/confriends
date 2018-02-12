@@ -15,6 +15,9 @@ import Paper from 'material-ui/Paper';
 import 'whatwg-fetch';
 import bows from 'bows';
 
+// my components
+import PageHeader from '../../Molecules/PageHeader';
+
 import history from '../../Assets/js/utils/history';
 
 class UpdateAttendeeForm extends Component {
@@ -101,10 +104,8 @@ class UpdateAttendeeForm extends Component {
 
     return (
       <div>
+        <PageHeader title="Update Attendee Info" />
         <Paper className={classes.paper}>
-          <Typography type="headline" gutterBottom>
-            Edit Attendee Information
-          </Typography>
           <form noValidate autoComplete="off">
             <TextField
               disabled
@@ -133,7 +134,11 @@ class UpdateAttendeeForm extends Component {
               }
               label="Approved"
             />
-            <Button raised color="primary" onClick={this.saveAttendeeInfo}>
+            <Button
+              variant="raised"
+              color="primary"
+              onClick={this.saveAttendeeInfo}
+            >
               Save
             </Button>
           </form>

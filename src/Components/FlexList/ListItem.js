@@ -55,13 +55,15 @@ const VisualListItem = props => {
       >
         <Card>
           <CardContent>
-            <Typography type="headline" gutterBottom>
+            <Typography variant="headline" gutterBottom>
               {props.item.name}{' '}
             </Typography>
-            <Typography type="body1">
+            <Typography variant="body1">
               {props.item.city}, {props.item.country}
             </Typography>
-            <Typography type="body1">{formatDate(props.item.date)}</Typography>
+            <Typography variant="body1">
+              {formatDate(props.item.date)}
+            </Typography>
           </CardContent>
         </Card>
       </Link>

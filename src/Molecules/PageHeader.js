@@ -26,7 +26,7 @@ const PageHeader = ({ classes, title }) => (
         spacing={24}
       >
         <Grid item xs={12} className={classes.flexBasisZero}>
-          <Typography type="display1">{title}</Typography>
+          <Typography variant="display1">{title}</Typography>
         </Grid>
       </Grid>
     </div>

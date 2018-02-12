@@ -33,7 +33,12 @@ const FlexList = ({ list, listName, classes, ...props }) => {
         <Grid container style={{ padding: 20 }} spacing={24}>
           {props.isAuthenticated() ? (
             <Grid item xs={12} style={{ textAlign: 'right' }}>
-              <Button raised color="primary" component={Link} to="/add-event">
+              <Button
+                variant="raised"
+                color="primary"
+                component={Link}
+                to="/add-event"
+              >
                 Add an Event
               </Button>
             </Grid>

@@ -23,7 +23,7 @@ import NavUser from '../NavUser/NavUser';
 import './Header.css';
 
 const Login = ({ onLoginClick }) => (
-  <Button color="contrast" onClick={onLoginClick}>
+  <Button color="default" onClick={onLoginClick}>
     Login
   </Button>
 );
@@ -42,7 +42,7 @@ const Header = ({ isAuthenticated, onLoginClick, onLogoutClick, classes }) => (
   <AppBar className={classes.header}>
     <Toolbar>
       <NavMain />
-      <Typography type="title" color="inherit" className={classes.bigFlex}>
+      <Typography variant="title" color="inherit" className={classes.bigFlex}>
         Confriends
       </Typography>
       {isAuthenticated() ? (
