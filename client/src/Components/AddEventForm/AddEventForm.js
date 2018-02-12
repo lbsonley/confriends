@@ -35,6 +35,29 @@ class AddEventForm extends Component {
     description: '',
   };
 
+  componentDidMount() {
+    const { match } = this.props;
+    if (match.params.collectionName && match.params.id) {
+      this.logger('you should fetch the conference to edit');
+    }
+    fetch(
+      `/api/${this.props.match.params.collectionName}/${
+        this.props.match.params.id
+      }`,
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(data => {
+        this.logger('setting new State with: ', { ...data.event });
+        this.setState({ ...data.event }); // eslint-disable-line react/no-did-mount-set-state
+      })
+      .catch(err => this.logger(err));
+  }
+
   logger = bows('AddEventForm');
 
   saveEvent = () => {

@@ -138,6 +138,11 @@ class App extends Component {
           <Route exact path="/add-event" component={AddEventForm} />
           <Route
             exact
+            path="/edit/:collectionName/:id"
+            component={AddEventForm}
+          />
+          <Route
+            exact
             path="/:collectionName/:id"
             render={props => (
               <ConferenceDetailsContainer
@@ -151,7 +156,7 @@ class App extends Component {
             )}
           />
           <Route
-            path="/:collectionName/:id/:userId"
+            path="/edit/:collectionName/:id/:userId"
             render={props => (
               <UpdateAttendeeForm profile={this.state.profile} {...props} />
             )}

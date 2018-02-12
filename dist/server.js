@@ -27,7 +27,7 @@ let db;
 _mongodb.MongoClient.connect('mongodb://localhost/confriends').then(connection => {
   db = connection;
   app.listen(3001, () => logger('running on port 3001'));
-}).catch(err => logger('ERROR:', err));
+}).catch(err => logger('Error connecting to DB:', err));
 
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({ extended: true }));
@@ -66,6 +66,9 @@ const deleteConferenceAttendees = (req, res) => {
   db.collection(req.params.collectionName).deleteMany({ eventId: req.params.eventId }).then(attendees => {
     logger('deleteConferenceAttendees');
     res.json({ attendees });
+  }).catch(err => {
+    logger('error deleting conference attendees: ', err);
+    res.json({ message: `Could not delete conference attendees: ${err}` });
   });
 };
 
@@ -75,6 +78,9 @@ const deleteConference = (req, res) => {
   db.collection(req.params.collectionName).deleteOne({ _id: eventId }).then(event => {
     logger('deleteConference');
     res.json({ event });
+  }).catch(err => {
+    logger('Error deleting conference: ', err);
+    res.json({ message: `Could not delete conference: ${err}` });
   });
 };
 
@@ -82,21 +88,27 @@ const getEventAttendees = (req, res) => {
   const { params } = req;
 
   db.collection('attendees').find({
-    eventId: params.id
+    eventId: params.eventId
   }).toArray().then(attendees => {
-    logger('getEventAttendees response', attendees);
+    logger('getEventAttendees response: ', attendees);
     res.json({ attendees });
+  }).catch(err => {
+    logger('error getting event attendees: ', err);
+    res.json({ message: `Could not get event attendees: ${err}` });
   });
 };
 
 const getOneEvent = (req, res) => {
   const { params } = req;
 
-  const eventId = getMongoId(params.id, res);
+  const eventId = getMongoId(params.eventId, res);
 
   db.collection(params.collectionName).find({ _id: eventId }).limit(1).next().then(event => {
     logger('getOneEvent response', event);
     res.json({ event });
+  }).catch(err => {
+    logger('error getting event: ', err);
+    res.json({ message: `Could not get event: ${err}` });
   });
 };
 
@@ -108,10 +120,26 @@ const getOneEvent = (req, res) => {
 app.delete('/api/:collectionName/:eventId/:userId', (req, res) => {
   const { eventId, userId } = req.params;
   db.collection(req.params.collectionName).findOneAndDelete({ eventId, userId }, err => {
-    db.collection(req.params.collectionName).find({ eventId }).toArray().then(attendees => {
-      logger('attendees after delete', attendees);
-      res.json({ attendees });
-    });
+    if (err) {
+      logger('error deleting attendee: ', err);
+      res.json({ message: `Could not delete attendee: ${err}` });
+      return;
+    }
+    getEventAttendees(req, res);
+    // db
+    //   .collection(req.params.collectionName)
+    //   .find({ eventId })
+    //   .toArray()
+    //   .then(attendees => {
+    //     logger('attendees after delete', attendees);
+    //     res.json({ attendees });
+    //   })
+    //   .catch(error => {
+    //     logger('error getting attendees after delete: ', error);
+    //     res.json({
+    //       message: `Could not get updated attendee list: ${error}`,
+    //     });
+    //   });
   });
 });
 
@@ -131,7 +159,11 @@ app.delete('/api/:collectionName/:eventId', (req, res) => {
 // updating an event's attendee with new approval info
 app.put('/api/:collectionName/:eventId/:userId', (req, res) => {
   logger('body', req.body);
-  db.collection(req.params.collectionName).updateOne({ eventId: req.params.eventId, userId: req.body.userId }, {
+  db.collection(req.params.collectionName).updateOne(
+  // filter
+  { eventId: req.params.eventId, userId: req.body.userId },
+  // info to update
+  {
     $set: {
       eventId: req.body.eventId,
       userId: req.body.userId,
@@ -139,7 +171,14 @@ app.put('/api/:collectionName/:eventId/:userId', (req, res) => {
       procurementLink: req.body.procurementLink,
       approved: req.body.approved
     }
-  }, result => {
+  },
+  // callback
+  err => {
+    if (err) {
+      logger('error updating attendee: ', err);
+      res.json({ message: `Could not update attendee info: ${err}` });
+      return;
+    }
     db.collection(req.params.collectionName).findOne({ eventId: req.params.eventId, userId: req.body.userId }).then(attendee => {
       logger('updatedAttendee: ', attendee);
       res.json(attendee);
@@ -151,16 +190,29 @@ app.put('/api/:collectionName/:eventId/:userId', (req, res) => {
 app.put('/api/:collectionName', (req, res) => {
   logger('body', req.body);
   const { name, website, date, city, country, description } = req.body;
-  db.collection(req.params.collectionName).updateOne({
+  db.collection(req.params.collectionName).updateOne(
+  // filter
+  {
     website
-  }, {
+  },
+  // data to update
+  {
     name,
     website,
     date,
     city,
     country,
     description
-  }, { upsert: true }, err => {
+  },
+  // options
+  { upsert: true },
+  // callback
+  err => {
+    if (err) {
+      logger('error adding event to collection: ', err);
+      res.json({ message: `Could not add event: ${err}` });
+      return;
+    }
     db.collection(req.params.collectionName).findOne({ website }).then(responseEvent => {
       logger('response', responseEvent);
       res.json(responseEvent);
@@ -168,7 +220,7 @@ app.put('/api/:collectionName', (req, res) => {
   });
 });
 
-// updating attendee collection
+// add attendee to event
 app.put('/api/:collectionName/:id', (req, res) => {
   logger('body', req.body);
   db.collection(req.params.collectionName).updateOne({
@@ -181,6 +233,11 @@ app.put('/api/:collectionName/:id', (req, res) => {
     procurementLink: req.body.procurementLink,
     approved: req.body.approved
   }, { upsert: true }, err => {
+    if (err) {
+      logger('Error adding attendee: ', err);
+      res.json({ message: `Could not add attendee: ${err}` });
+      return;
+    }
     db.collection(req.params.collectionName).findOne({ eventId: req.body.eventId, userId: req.body.userId }).then(responseAttendee => {
       logger('response', responseAttendee);
       res.json(responseAttendee);
@@ -206,7 +263,7 @@ app.get('/api/:collectionName/:eventId/:userId', (req, res) => {
 });
 
 // endpoint for event detail page
-app.get('/api/:collectionName/:id', (req, res) => {
+app.get('/api/:collectionName/:eventId', (req, res) => {
   if (req.params.collectionName === 'conferences') {
     getOneEvent(req, res);
   } else if (req.params.collectionName === 'attendees') {

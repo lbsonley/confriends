@@ -76,7 +76,7 @@ class Attendee extends Component {
               color="primary"
               aria-label="edit"
               component={Link}
-              to={`/${props.collectionName}/${props.eventId}/${
+              to={`/edit/${props.collectionName}/${props.eventId}/${
                 props.attendee.userId
               }`}
             >

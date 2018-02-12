@@ -325,7 +325,7 @@ class ConferenceDetailsContainer extends Component {
           </section>
           <Grid container style={{ padding: 20 }} spacing={40}>
             <Grid item xs={12}>
-              <Button raised color="secondary" onClick={this.handleDeleteEvent}>
+              <Button raised color="accent" onClick={this.handleDeleteEvent}>
                 Delete event
               </Button>
             </Grid>

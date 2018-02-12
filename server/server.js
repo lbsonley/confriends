@@ -18,7 +18,7 @@ MongoClient.connect('mongodb://localhost/confriends')
     db = connection;
     app.listen(3001, () => logger('running on port 3001'));
   })
-  .catch(err => logger('ERROR:', err));
+  .catch(err => logger('Error connecting to DB:', err));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -60,6 +60,10 @@ const deleteConferenceAttendees = (req, res) => {
     .then(attendees => {
       logger('deleteConferenceAttendees');
       res.json({ attendees });
+    })
+    .catch(err => {
+      logger('error deleting conference attendees: ', err);
+      res.json({ message: `Could not delete conference attendees: ${err}` });
     });
 };
 
@@ -72,6 +76,10 @@ const deleteConference = (req, res) => {
     .then(event => {
       logger('deleteConference');
       res.json({ event });
+    })
+    .catch(err => {
+      logger('Error deleting conference: ', err);
+      res.json({ message: `Could not delete conference: ${err}` });
     });
 };
 
@@ -81,19 +89,23 @@ const getEventAttendees = (req, res) => {
   db
     .collection('attendees')
     .find({
-      eventId: params.id,
+      eventId: params.eventId,
     })
     .toArray()
     .then(attendees => {
-      logger('getEventAttendees response', attendees);
+      logger('getEventAttendees response: ', attendees);
       res.json({ attendees });
+    })
+    .catch(err => {
+      logger('error getting event attendees: ', err);
+      res.json({ message: `Could not get event attendees: ${err}` });
     });
 };
 
 const getOneEvent = (req, res) => {
   const { params } = req;
 
-  const eventId = getMongoId(params.id, res);
+  const eventId = getMongoId(params.eventId, res);
 
   db
     .collection(params.collectionName)
@@ -103,6 +115,10 @@ const getOneEvent = (req, res) => {
     .then(event => {
       logger('getOneEvent response', event);
       res.json({ event });
+    })
+    .catch(err => {
+      logger('error getting event: ', err);
+      res.json({ message: `Could not get event: ${err}` });
     });
 };
 
@@ -116,14 +132,26 @@ app.delete('/api/:collectionName/:eventId/:userId', (req, res) => {
   db
     .collection(req.params.collectionName)
     .findOneAndDelete({ eventId, userId }, err => {
-      db
-        .collection(req.params.collectionName)
-        .find({ eventId })
-        .toArray()
-        .then(attendees => {
-          logger('attendees after delete', attendees);
-          res.json({ attendees });
-        });
+      if (err) {
+        logger('error deleting attendee: ', err);
+        res.json({ message: `Could not delete attendee: ${err}` });
+        return;
+      }
+      getEventAttendees(req, res);
+      // db
+      //   .collection(req.params.collectionName)
+      //   .find({ eventId })
+      //   .toArray()
+      //   .then(attendees => {
+      //     logger('attendees after delete', attendees);
+      //     res.json({ attendees });
+      //   })
+      //   .catch(error => {
+      //     logger('error getting attendees after delete: ', error);
+      //     res.json({
+      //       message: `Could not get updated attendee list: ${error}`,
+      //     });
+      //   });
     });
 });
 
@@ -144,7 +172,9 @@ app.delete('/api/:collectionName/:eventId', (req, res) => {
 app.put('/api/:collectionName/:eventId/:userId', (req, res) => {
   logger('body', req.body);
   db.collection(req.params.collectionName).updateOne(
+    // filter
     { eventId: req.params.eventId, userId: req.body.userId },
+    // info to update
     {
       $set: {
         eventId: req.body.eventId,
@@ -154,7 +184,13 @@ app.put('/api/:collectionName/:eventId/:userId', (req, res) => {
         approved: req.body.approved,
       },
     },
-    result => {
+    // callback
+    err => {
+      if (err) {
+        logger('error updating attendee: ', err);
+        res.json({ message: `Could not update attendee info: ${err}` });
+        return;
+      }
       db
         .collection(req.params.collectionName)
         .findOne({ eventId: req.params.eventId, userId: req.body.userId })
@@ -162,7 +198,7 @@ app.put('/api/:collectionName/:eventId/:userId', (req, res) => {
           logger('updatedAttendee: ', attendee);
           res.json(attendee);
         });
-    }
+    },
   );
 });
 
@@ -171,9 +207,11 @@ app.put('/api/:collectionName', (req, res) => {
   logger('body', req.body);
   const { name, website, date, city, country, description } = req.body;
   db.collection(req.params.collectionName).updateOne(
+    // filter
     {
       website,
     },
+    // data to update
     {
       name,
       website,
@@ -182,8 +220,15 @@ app.put('/api/:collectionName', (req, res) => {
       country,
       description,
     },
+    // options
     { upsert: true },
+    // callback
     err => {
+      if (err) {
+        logger('error adding event to collection: ', err);
+        res.json({ message: `Could not add event: ${err}` });
+        return;
+      }
       db
         .collection(req.params.collectionName)
         .findOne({ website })
@@ -191,11 +236,11 @@ app.put('/api/:collectionName', (req, res) => {
           logger('response', responseEvent);
           res.json(responseEvent);
         });
-    }
+    },
   );
 });
 
-// updating attendee collection
+// add attendee to event
 app.put('/api/:collectionName/:id', (req, res) => {
   logger('body', req.body);
   db.collection(req.params.collectionName).updateOne(
@@ -212,6 +257,11 @@ app.put('/api/:collectionName/:id', (req, res) => {
     },
     { upsert: true },
     err => {
+      if (err) {
+        logger('Error adding attendee: ', err);
+        res.json({ message: `Could not add attendee: ${err}` });
+        return;
+      }
       db
         .collection(req.params.collectionName)
         .findOne({ eventId: req.body.eventId, userId: req.body.userId })
@@ -243,7 +293,7 @@ app.get('/api/:collectionName/:eventId/:userId', (req, res) => {
 });
 
 // endpoint for event detail page
-app.get('/api/:collectionName/:id', (req, res) => {
+app.get('/api/:collectionName/:eventId', (req, res) => {
   if (req.params.collectionName === 'conferences') {
     getOneEvent(req, res);
   } else if (req.params.collectionName === 'attendees') {
