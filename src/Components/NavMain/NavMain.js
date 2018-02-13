@@ -83,12 +83,8 @@ class NavMain extends Component {
             >
               <Paper>
                 <MenuList role="menu">
-                  <MenuItem
-                    onClick={this.closeMenu}
-                    component={Link}
-                    to="/dummy"
-                  >
-                    Dashboard
+                  <MenuItem onClick={this.closeMenu} component={Link} to="/">
+                    Home
                   </MenuItem>
                   <MenuItem
                     onClick={this.closeMenu}

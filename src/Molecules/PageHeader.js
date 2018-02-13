@@ -14,8 +14,8 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
-const PageHeader = ({ classes, title }) => (
-  <section className={classes.pageHeader}>
+const PageHeader = ({ classes, title, bgColor, color }) => (
+  <section className={classes.pageHeader} style={{ backgroundColor: bgColor }}>
     <div className="content">
       <Grid
         container
@@ -23,10 +23,11 @@ const PageHeader = ({ classes, title }) => (
         alignItems="flex-start"
         justify="center"
         style={{ height: '100%' }}
-        spacing={24}
       >
         <Grid item xs={12} className={classes.flexBasisZero}>
-          <Typography variant="display1">{title}</Typography>
+          <Typography variant="display2" style={{ color }}>
+            {title}
+          </Typography>
         </Grid>
       </Grid>
     </div>
@@ -38,7 +39,6 @@ const styles = {
     marginTop: 64,
     marginBottom: 32,
     height: 380,
-    backgroundColor: '#010101',
   },
   flexBasisZero: {
     flexBasis: 0,
@@ -47,6 +47,8 @@ const styles = {
 
 PageHeader.propTypes = {
   title: PropTypes.string,
+  bgColor: PropTypes.string,
+  color: PropTypes.string,
   classes: PropTypes.shape({
     pageHeader: PropTypes.string.required,
     flexBasisZero: PropTypes.string.required,
@@ -55,6 +57,8 @@ PageHeader.propTypes = {
 
 PageHeader.defaultProps = {
   title: 'Page Title',
+  bgColor: '#010101',
+  color: '#fff',
 };
 
 export default withStyles(styles)(PageHeader);

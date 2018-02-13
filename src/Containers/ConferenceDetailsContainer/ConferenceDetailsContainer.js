@@ -252,7 +252,7 @@ class ConferenceDetailsContainer extends Component {
       <div>
         <PageHeader title={this.state.event.name} />
         <section className="content">
-          <Grid container style={{ padding: 20 }} spacing={40}>
+          <Grid container>
             <Grid item xs={12}>
               <Typography variant="headline" gutterBottom>
                 Details
@@ -323,8 +323,23 @@ class ConferenceDetailsContainer extends Component {
             )}
           </section>
           {this.props.isAuthenticated() ? (
-            <Grid container style={{ padding: 20 }} spacing={40}>
-              <Grid item xs={12}>
+            <Grid container style={{ marginTop: 80 }}>
+              <Grid
+                item
+                xs={12}
+                style={{
+                  borderWidth: 2,
+                  borderColor: '#F2453D',
+                  borderStyle: 'solid',
+                  marginBottom: 16,
+                }}
+              >
+                <Typography variant="headline" color="error">
+                  Danger Zone
+                </Typography>
+                <Typography variant="subheading" color="error">
+                  By deleting this event you will lose all data related to it.
+                </Typography>
                 <Button
                   variant="raised"
                   color="secondary"
@@ -342,9 +357,10 @@ class ConferenceDetailsContainer extends Component {
 }
 
 const styles = theme => ({
-  card: theme.mixins.gutters({
-    padding: theme.spacing.unit * 3,
-  }),
+  card: {
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2,
+  },
   button: theme.mixins.gutters({
     marginTop: theme.spacing.unit * 3,
   }),
@@ -355,6 +371,8 @@ const styles = theme => ({
     padding: 24,
   },
   medium: {
+    marginTop: 16,
+    marginBottom: 16,
     padding: 16,
   },
   link: {

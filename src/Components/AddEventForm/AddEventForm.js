@@ -109,7 +109,7 @@ class AddEventForm extends Component {
         <PageHeader title="Add Event" />
         <section className="content">
           <form noValidate autoComplete="off">
-            <Grid container style={{ padding: 20 }} spacing={24}>
+            <Grid container>
               <Grid item xs={12} sm={8}>
                 <TextField
                   id="name"

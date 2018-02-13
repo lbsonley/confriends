@@ -9,7 +9,11 @@ import { Link } from 'react-router-dom';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
+import Typography from 'material-ui/Typography';
+
+// material ui icons
 import AddIcon from 'material-ui-icons/Add';
+import QueryBuilder from 'material-ui-icons/QueryBuilder';
 
 // my components
 import PageHeader from '../../Molecules/PageHeader';
@@ -30,21 +34,34 @@ const FlexList = ({ list, listName, classes, ...props }) => {
     <div>
       <PageHeader title="Upcoming Events" />
       <section className="content">
-        <Grid container style={{ padding: 20 }} spacing={24}>
-          {props.isAuthenticated() ? (
-            <Grid item xs={12} style={{ textAlign: 'right' }}>
-              <Button
-                variant="raised"
-                color="primary"
-                component={Link}
-                to="/add-event"
-              >
-                Add an Event
-              </Button>
-            </Grid>
-          ) : null}
-          {listItems}
-        </Grid>
+        {list.length === 0 ? (
+          <div style={{ textAlign: 'center' }}>
+            <QueryBuilder
+              style={{ height: 128, width: 128, color: '#3a3a3a' }}
+            />
+            <Typography variant="headline">Fetching the list...</Typography>
+            <Typography variant="headline">
+              ...Sorry if it takes a while. The host might need to start the
+              server before it can query the database.
+            </Typography>
+          </div>
+        ) : (
+          <Grid container>
+            {props.isAuthenticated() ? (
+              <Grid item xs={12} style={{ textAlign: 'right' }}>
+                <Button
+                  variant="raised"
+                  color="primary"
+                  component={Link}
+                  to="/add-event"
+                >
+                  Add an Event
+                </Button>
+              </Grid>
+            ) : null}
+            {listItems}
+          </Grid>
+        )}
       </section>
     </div>
   );

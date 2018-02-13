@@ -22,6 +22,7 @@ import Dummy from './Components/Dummy';
 import Header from './Components/Header/Header';
 import UpdateAttendeeForm from './Components/UpdateAttendeeForm/UpdateAttendeeForm';
 import AddEventForm from './Components/AddEventForm/AddEventForm';
+import Home from './Containers/Home/Home';
 
 // my utils
 import Auth from './Auth/Auth';
@@ -118,9 +119,21 @@ class App extends Component {
             }
           </Media> */}
 
-          <Switch>
+          {/* <Switch>
             <Redirect from="/" exact to="/conferences" />
-          </Switch>
+          </Switch> */}
+
+          <Route
+            exact
+            path="/"
+            render={props => (
+              <Home
+                isAuthenticated={auth.isAuthenticated}
+                onLoginClick={this.login}
+                {...props}
+              />
+            )}
+          />
           <Route exact path="/dummy" component={Dummy} />
           {/* <section className="content"> */}
           <Route
