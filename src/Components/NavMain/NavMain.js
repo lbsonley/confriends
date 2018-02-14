@@ -61,9 +61,9 @@ class NavMain extends Component {
             onClick={this.state.navIsExpanded ? this.closeMenu : this.openMenu}
           >
             {this.state.navIsExpanded ? (
-              <NavigationClose color="action" />
+              <NavigationClose style={{ fill: '#fff' }} />
             ) : (
-              <MenuIcon color="action" />
+              <MenuIcon style={{ fill: '#fff' }} />
             )}
           </IconButton>
         </Target>

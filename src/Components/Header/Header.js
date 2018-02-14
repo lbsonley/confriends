@@ -23,7 +23,7 @@ import NavUser from '../NavUser/NavUser';
 import './Header.css';
 
 const Login = ({ onLoginClick }) => (
-  <Button color="default" onClick={onLoginClick}>
+  <Button style={{ color: '#fff' }} onClick={onLoginClick}>
     Login
   </Button>
 );

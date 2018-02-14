@@ -61,7 +61,7 @@ class LoggedIn extends Component {
               this.state.userMenuIsExpanded ? this.closeMenu : this.openMenu
             }
           >
-            <MoreVertIcon color="action" />
+            <MoreVertIcon style={{ fill: '#fff' }} />
           </IconButton>
         </Target>
         <Popper
