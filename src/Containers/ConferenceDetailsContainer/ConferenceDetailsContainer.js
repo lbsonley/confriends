@@ -39,7 +39,6 @@ class ConferenceDetailsContainer extends Component {
     };
     this.addUserToEvent = this.addUserToEvent.bind(this);
     this.checkEventsUserList = this.checkEventsUserList.bind(this);
-    this.checkUsersEventList = this.checkUsersEventList.bind(this);
     this.validateUserAttend = this.validateUserAttend.bind(this);
     this.removeAttendee = this.removeAttendee.bind(this);
     this.handleDeleteEvent = this.handleDeleteEvent.bind(this);
@@ -100,78 +99,14 @@ class ConferenceDetailsContainer extends Component {
   };
 
   /**
-   * checkArray
-   * @description check array for presence of item and execute callback
-   * @param {Array} array - array to be checked
-   * @param {String} value - item to look for in array
-   * @param {func} cb - function to execute if value is found
-   */
-  checkArray = ({ array, value, cb }) => {
-    // check if array has entries
-    if (array && array.length > 0) {
-      // check if value is present in array
-      if (!logic.arrayHasValue(array, value)) {
-        // add value to array
-        cb();
-      }
-    } else {
-      cb();
-    }
-  };
-
-  /**
-   * checkUsersEventList
-   * @description check if event is already in a user's event list
-   */
-  checkUsersEventList() {
-    const { user_metadata } = this.props.profile;
-    const { _id } = this.state.event;
-
-    this.checkArray({
-      array: user_metadata.events,
-      value: _id,
-      cb: this.addEventToUser,
-    });
-  }
-
-  /**
-   * addEventToUser
-   * @description add event to event list in user profile
-   */
-  addEventToUser = () => {
-    const { user_metadata, user_id } = this.props.profile;
-    const { name, _id } = this.state.event;
-    const { getIdToken, setupUserManagementAPI } = this.props;
-    const idToken = getIdToken();
-    const auth0Manage = setupUserManagementAPI(idToken);
-    const updatedEvents = user_metadata.events || [];
-
-    updatedEvents.push({
-      title: name,
-      // eslint-disable-next-line no-underscore-dangle
-      id: _id,
-    });
-
-    auth0Manage.patchUserMetadata(
-      user_id,
-      { events: updatedEvents },
-      (err, data) => this.logger(err, data),
-    );
-  };
-
-  /**
    * checkEventsUserList
    * @description check if user is already present on event's attendee list
    */
   checkEventsUserList() {
-    const { userId } = this.props.profile;
+    const { user_id } = this.props.profile;
     const { _id } = this.state.event;
     const { attendees } = this.state;
-
-    if (
-      !logic.matchUserId(attendees, userId) &&
-      !logic.matchEventId(attendees, _id)
-    ) {
+    if (!logic.matchEventAndUserId(attendees, _id, user_id)) {
       this.logger('adding user to event');
       this.addUserToEvent();
     }
@@ -220,7 +155,6 @@ class ConferenceDetailsContainer extends Component {
    */
   validateUserAttend() {
     this.checkEventsUserList();
-    this.checkUsersEventList();
   }
 
   /**

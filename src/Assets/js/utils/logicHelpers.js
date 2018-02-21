@@ -22,4 +22,10 @@ export default {
   matchEventId(array, value) {
     return array.find(item => item.eventId === value);
   },
+
+  matchEventAndUserId(array, eventId, userId) {
+    return array.find(
+      item => item.eventId === eventId && item.userId === userId,
+    );
+  },
 };
