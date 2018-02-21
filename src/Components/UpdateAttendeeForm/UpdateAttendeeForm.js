@@ -19,6 +19,7 @@ import bows from 'bows';
 import PageHeader from '../../Molecules/PageHeader';
 
 import history from '../../Assets/js/utils/history';
+import fetchHelpers from '../../Assets/js/utils/fetchHelpers';
 
 class UpdateAttendeeForm extends Component {
   // using props to set initial state because edit form
@@ -36,15 +37,11 @@ class UpdateAttendeeForm extends Component {
         this.props.match.params.userId
       }`,
     )
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
       .then(data => {
         this.logger('setting new State with: ', data);
-        this.setState({ ...data.attendee }); // eslint-disable-line react/no-did-mount-set-state
+        this.setState({ ...data.attendee });
       })
       .catch(err => this.logger(err));
   }
@@ -81,7 +78,8 @@ class UpdateAttendeeForm extends Component {
         }),
       },
     )
-      .then(res => res.json())
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
       .then(data => {
         this.logger('setting new state with: ', data);
         this.setState(prevState => ({
@@ -96,7 +94,8 @@ class UpdateAttendeeForm extends Component {
             this.props.match.params.id
           }`,
         );
-      });
+      })
+      .catch(err => this.logger(err));
   };
 
   render() {

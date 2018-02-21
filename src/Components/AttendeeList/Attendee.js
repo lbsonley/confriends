@@ -17,6 +17,9 @@ import DeleteIcon from 'material-ui-icons/Delete';
 import Warning from 'material-ui-icons/Warning';
 import Check from 'material-ui-icons/Check';
 
+// utils
+import fetchHelpers from '../../Assets/js/utils/fetchHelpers';
+
 // my components
 import { withContext } from '../../Containers/Provider/Provider';
 
@@ -40,12 +43,8 @@ class Attendee extends Component {
         userId: attendee.userId,
       }),
     })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
       .then(data => {
         this.logger('setting new state with: ', data);
         removeAttendee(data.attendees);

@@ -24,12 +24,10 @@ require('dotenv').config();
 const app = (0, _express2.default)();
 let db;
 const port = process.env.PORT || 3001;
-console.log('isprod', process.env.PROD);
-console.log('MLAB_ENV', process.env.MLAB_URI);
 
 const mongoUri = process.env.PROD ? process.env.MLAB_URI : 'mongodb://localhost/confriends';
 
-console.log('dbURI', mongoUri);
+logger('using the following DB URI: ', mongoUri);
 _mongodb.MongoClient.connect(mongoUri).then(connection => {
   db = connection.db('confriends');
   app.listen(port, () => logger(`running on port ${port}`));
@@ -284,6 +282,7 @@ app.get('/api/:collectionName/:eventId', (req, res) => {
 // endpoint for a list of events
 app.get('/api/:collectionName', (req, res) => {
   db.collection(req.params.collectionName).find().toArray().then(events => {
+    logger('get all events response', events);
     res.json({ events });
   });
 });

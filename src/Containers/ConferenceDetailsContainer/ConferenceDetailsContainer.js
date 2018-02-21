@@ -21,6 +21,7 @@ import AttendeeList from '../../Components/AttendeeList/AttendeeList';
 import PageHeader from '../../Molecules/PageHeader';
 
 import logic from '../../Assets/js/utils/logicHelpers';
+import fetchHelpers from '../../Assets/js/utils/fetchHelpers';
 import history from '../../Assets/js/utils/history';
 
 const querystring = require('querystring');
@@ -54,31 +55,25 @@ class ConferenceDetailsContainer extends Component {
       }?userId=123&abc=def`,
     )
       .then(response => {
-        console.log(response.url);
+        this.logger(response.url);
 
         const re = /\?(.*)/;
         const queryMatch = re.exec(response.url);
-        console.log(queryMatch);
-        console.log(querystring.parse(queryMatch[1]));
-
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
+        this.logger(queryMatch);
+        this.logger(querystring.parse(queryMatch[1]));
+        return response;
       })
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
       .then(data => {
         this.logger('setting new State with: ', data);
-        this.setState({ event: data.event }); // eslint-disable-line react/no-did-mount-set-state
+        this.setState({ event: data.event });
       })
       .catch(err => this.logger(err));
 
     fetch(`/api/attendees/${this.props.match.params.id}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
       .then(data => {
         this.logger('setting new state with: ', data);
         this.setState({
@@ -130,7 +125,8 @@ class ConferenceDetailsContainer extends Component {
         approved: false,
       }),
     })
-      .then(res => res.json())
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
       .then(data => {
         this.logger('setting new state with: ', data);
         this.setState(prevState => ({
@@ -167,18 +163,22 @@ class ConferenceDetailsContainer extends Component {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     })
-      .then(response => response.json())
-      .then(data => this.logger(data));
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
+      .then(data => this.logger(data))
+      .catch(err => this.logger(err));
 
     // eslint-disable-next-line no-underscore-dangle
     fetch(`/api/conferences/${this.state.event._id}`, {
       method: 'DELETE',
       header: { 'Content-Type': 'application/json' },
     })
-      .then(response => response.json())
-      .then(data => this.logger(data));
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
+      .then(data => this.logger(data))
+      .catch(err => this.logger(err));
 
-    history.push('/');
+    history.push('/conferences');
   }
 
   render() {

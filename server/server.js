@@ -13,14 +13,12 @@ require('dotenv').config();
 const app = express();
 let db;
 const port = process.env.PORT || 3001;
-console.log('isprod', process.env.PROD);
-console.log('MLAB_ENV', process.env.MLAB_URI);
 
 const mongoUri = process.env.PROD
   ? process.env.MLAB_URI
   : 'mongodb://localhost/confriends';
 
-console.log('dbURI', mongoUri);
+logger('using the following DB URI: ', mongoUri);
 MongoClient.connect(mongoUri)
   .then(connection => {
     db = connection.db('confriends');
@@ -320,6 +318,7 @@ app.get('/api/:collectionName', (req, res) => {
     .find()
     .toArray()
     .then(events => {
+      logger('get all events response', events);
       res.json({ events });
     });
 });

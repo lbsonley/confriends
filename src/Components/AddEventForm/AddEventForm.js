@@ -21,6 +21,7 @@ import Paper from 'material-ui/Paper';
 
 // my utils
 import history from '../../Assets/js/utils/history';
+import fetchHelpers from '../../Assets/js/utils/fetchHelpers';
 
 // my components
 import PageHeader from '../../Molecules/PageHeader';
@@ -45,12 +46,8 @@ class AddEventForm extends Component {
         this.props.match.params.id
       }`,
     )
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
       .then(data => {
         this.logger('setting new State with: ', { ...data.event });
         this.setState({ ...data.event }); // eslint-disable-line react/no-did-mount-set-state
@@ -74,12 +71,8 @@ class AddEventForm extends Component {
         description,
       }),
     })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
       .then(data => {
         this.logger('setting new state with: ', data);
         this.setState({

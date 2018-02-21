@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import bows from 'bows';
 import 'whatwg-fetch';
 
+import fetchHelpers from '../../Assets/js/utils/fetchHelpers';
+
 import FlexList from '../../Components/FlexList/FlexList';
 
 export default class ListContainer extends Component {
@@ -25,12 +27,8 @@ export default class ListContainer extends Component {
         Authorization: `Bearer ${getAccessToken()}`,
       },
     })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
+      .then(fetchHelpers.validateResponse)
+      .then(fetchHelpers.parseJSON)
       .then(data => {
         this.logger('setting new State with: ', data);
         this.setState({ eventList: data.events });
