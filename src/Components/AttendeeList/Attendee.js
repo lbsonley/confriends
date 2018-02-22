@@ -35,7 +35,7 @@ class Attendee extends Component {
   handleDelete = () => {
     const { eventId, attendee, removeAttendee } = this.props;
     this.logger('deleting');
-    fetch(`/api/attendees/${attendee.eventId}/${attendee.userId}`, {
+    fetch(`/api/v1/attendees/${attendee.eventId}/${attendee.userId}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

@@ -31,9 +31,8 @@
 	},
 	"scripts": {
 		"start": "react-scripts start",
-		"now-start": "PROD=true node dist/server.js",
-		"start:server": "DEBUG=expressServer nodemon --watch dist dist/server.js",
-		"compile:server": "babel server --watch --presets es2015-node --out-dir dist --source-maps",
+		"now-start": "DEBUG=serverConstructor,serverRouter,dbConstructor,conferenceService,attendeesService node server/server.js",
+		"dev-server": "DEBUG=serverConstructor,serverRouter,dbConstructor,conferenceService,attendeesService nodemon --watch server server/server.js",
 		"start:db": "mongod --dbpath db",
 		"lint": "npx eslint --fix --config ./.eslintrc src/*.js src/**/*.js server/*.js",
 		"build": "react-scripts build",

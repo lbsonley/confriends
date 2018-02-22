@@ -40,26 +40,26 @@ class AddEventForm extends Component {
     const { match } = this.props;
     if (match.params.collectionName && match.params.id) {
       this.logger('you should fetch the conference to edit');
+      fetch(
+        `/api/v1/${this.props.match.params.collectionName}/${
+          this.props.match.params.id
+        }`,
+      )
+        .then(fetchHelpers.validateResponse)
+        .then(fetchHelpers.parseJSON)
+        .then(data => {
+          this.logger('setting new State with: ', { ...data.event });
+          this.setState({ ...data.event }); // eslint-disable-line react/no-did-mount-set-state
+        })
+        .catch(err => this.logger(err));
     }
-    fetch(
-      `/api/${this.props.match.params.collectionName}/${
-        this.props.match.params.id
-      }`,
-    )
-      .then(fetchHelpers.validateResponse)
-      .then(fetchHelpers.parseJSON)
-      .then(data => {
-        this.logger('setting new State with: ', { ...data.event });
-        this.setState({ ...data.event }); // eslint-disable-line react/no-did-mount-set-state
-      })
-      .catch(err => this.logger(err));
   }
 
   logger = bows('AddEventForm');
 
   saveEvent = () => {
     const { name, city, country, date, website, description } = this.state;
-    fetch(`/api/conferences`, {
+    fetch(`/api/v1/conferences`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

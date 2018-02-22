@@ -50,7 +50,7 @@ class ConferenceDetailsContainer extends Component {
   componentDidMount() {
     // fetch the data for single event and store it in state
     fetch(
-      `/api/${this.props.match.params.collectionName}/${
+      `/api/v1/${this.props.match.params.collectionName}/${
         this.props.match.params.id
       }?userId=123&abc=def`,
     )
@@ -71,7 +71,7 @@ class ConferenceDetailsContainer extends Component {
       })
       .catch(err => this.logger(err));
 
-    fetch(`/api/attendees/${this.props.match.params.id}`)
+    fetch(`/api/v1/attendees/${this.props.match.params.id}`)
       .then(fetchHelpers.validateResponse)
       .then(fetchHelpers.parseJSON)
       .then(data => {
@@ -114,7 +114,7 @@ class ConferenceDetailsContainer extends Component {
   addUserToEvent = () => {
     const { nickname, user_id } = this.props.profile;
 
-    fetch(`/api/attendees/${this.props.match.params.id}`, {
+    fetch(`/api/v1/attendees/${this.props.match.params.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -159,7 +159,7 @@ class ConferenceDetailsContainer extends Component {
    */
   handleDeleteEvent() {
     // eslint-disable-next-line no-underscore-dangle
-    fetch(`/api/attendees/${this.state.event._id}`, {
+    fetch(`/api/v1/attendees/${this.state.event._id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -169,7 +169,7 @@ class ConferenceDetailsContainer extends Component {
       .catch(err => this.logger(err));
 
     // eslint-disable-next-line no-underscore-dangle
-    fetch(`/api/conferences/${this.state.event._id}`, {
+    fetch(`/api/v1/conferences/${this.state.event._id}`, {
       method: 'DELETE',
       header: { 'Content-Type': 'application/json' },
     })

@@ -9,7 +9,7 @@ import auth0 from 'auth0-js';
 
 import bows from 'bows';
 import history from '../Assets/js/utils/history';
-import AUTH_CONFIG from './auth0.config';
+import config from './auth0.config';
 
 export default class Auth {
   constructor() {
@@ -31,10 +31,10 @@ export default class Auth {
   logger = bows('Auth');
 
   auth0 = new auth0.WebAuth({
-    domain: AUTH_CONFIG.domain,
-    clientID: AUTH_CONFIG.clientId,
-    redirectUri: AUTH_CONFIG.redirectUri,
-    audience: AUTH_CONFIG.audience,
+    domain: config.domain,
+    clientID: config.clientId,
+    redirectUri: config.redirectUri,
+    audience: config.audience,
     responseType: 'token id_token',
     scope: 'openid profile',
   });
@@ -135,7 +135,7 @@ export default class Auth {
 
   setupUserManagementAPI(idToken) {
     return new auth0.Management({
-      domain: AUTH_CONFIG.domain,
+      domain: config.domain,
       token: idToken,
     });
   }

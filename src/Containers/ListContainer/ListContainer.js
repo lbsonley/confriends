@@ -22,7 +22,7 @@ export default class ListContainer extends Component {
 
   componentDidMount() {
     const { getAccessToken } = this.props;
-    fetch(`/api/${this.props.listName}`, {
+    fetch(`/api/v1/${this.props.listName}`, {
       headers: {
         Authorization: `Bearer ${getAccessToken()}`,
       },

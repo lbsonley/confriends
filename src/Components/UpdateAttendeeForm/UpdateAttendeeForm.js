@@ -33,7 +33,7 @@ class UpdateAttendeeForm extends Component {
 
   componentDidMount() {
     fetch(
-      `/api/attendees/${this.props.match.params.id}/${
+      `/api/v1/attendees/${this.props.match.params.id}/${
         this.props.match.params.userId
       }`,
     )
@@ -63,7 +63,7 @@ class UpdateAttendeeForm extends Component {
   saveAttendeeInfo = () => {
     const { eventId, userId, name, procurementLink, approved } = this.state;
     fetch(
-      `/api/attendees/${this.props.match.params.id}/${
+      `/api/v1/attendees/${this.props.match.params.id}/${
         this.props.match.params.userId
       }`,
       {
