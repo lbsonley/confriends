@@ -29,6 +29,8 @@ class UpdateAttendeeForm extends Component {
     id: '',
     procurementLink: '',
     approved: false,
+    invalidFields: {},
+    timer: undefined,
   };
 
   componentDidMount() {
@@ -49,8 +51,13 @@ class UpdateAttendeeForm extends Component {
   logger = bows('UpdateAttendeeForm');
 
   handleTextInputChange = e => {
+    const { name, value } = e.target;
     this.setState({
-      [e.target.name]: e.target.value,
+      [name]: value,
+    });
+
+    this.validateUrl(name, value).then(invalidFields => {
+      this.setState({ invalidFields });
     });
   };
 
@@ -60,42 +67,64 @@ class UpdateAttendeeForm extends Component {
     });
   };
 
-  saveAttendeeInfo = () => {
+  validateUrl = (name, value) => {
+    const invalidFields = Object.assign({}, this.state.invalidFields);
+    const valid = /^http[s]?:\/\/jira\.unic\.com\/browse\/PROCH-\d+$/.test(
+      value,
+    );
+    return new Promise((resolve, reject) => {
+      if (!valid) {
+        invalidFields[name] = true;
+      } else {
+        delete invalidFields[name];
+      }
+      resolve(invalidFields);
+    });
+  };
+
+  saveAttendeeInfo = e => {
     const { eventId, userId, name, procurementLink, approved } = this.state;
-    fetch(
-      `/api/v1/attendees/${this.props.match.params.id}/${
-        this.props.match.params.userId
-      }`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          eventId,
-          userId,
-          name,
-          procurementLink,
-          approved,
-        }),
-      },
-    )
-      .then(fetchHelpers.validateResponse)
-      .then(fetchHelpers.parseJSON)
-      .then(data => {
-        this.logger('setting new state with: ', data);
-        this.setState(prevState => ({
-          eventId: data.eventId,
-          userId: data.userId,
-          name: data.name,
-          procurementLink: data.procurementLink,
-          approved: data.approved,
-        }));
-        history.push(
-          `/${this.props.match.params.collectionName}/${
-            this.props.match.params.id
+    e.preventDefault();
+
+    this.validateUrl('procurementLink', procurementLink).then(invalidFields => {
+      this.setState({ invalidFields });
+      if (Object.keys(invalidFields).length === 0) {
+        fetch(
+          `/api/v1/attendees/${this.props.match.params.id}/${
+            this.props.match.params.userId
           }`,
-        );
-      })
-      .catch(err => this.logger(err));
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              eventId,
+              userId,
+              name,
+              procurementLink,
+              approved,
+            }),
+          },
+        )
+          .then(fetchHelpers.validateResponse)
+          .then(fetchHelpers.parseJSON)
+          .then(data => {
+            this.logger('setting new state with: ', data);
+            this.setState(prevState => ({
+              eventId: data.eventId,
+              userId: data.userId,
+              name: data.name,
+              procurementLink: data.procurementLink,
+              approved: data.approved,
+            }));
+            history.push(
+              `/${this.props.match.params.collectionName}/${
+                this.props.match.params.id
+              }`,
+            );
+          })
+          .catch(err => this.logger(err));
+      }
+    });
   };
 
   render() {
@@ -122,6 +151,12 @@ class UpdateAttendeeForm extends Component {
               value={this.state.procurementLink}
               onChange={this.handleTextInputChange}
               margin="normal"
+              error={this.state.invalidFields.procurementLink}
+              helperText={
+                this.state.invalidFields.procurementLink
+                  ? 'Please enter a valid procumrent ticket URL'
+                  : null
+              }
             />
             <FormControlLabel
               control={
@@ -134,8 +169,10 @@ class UpdateAttendeeForm extends Component {
               label="Approved"
             />
             <Button
+              disabled={Object.keys(this.state.invalidFields).length !== 0}
               variant="raised"
               color="primary"
+              type="submit"
               onClick={this.saveAttendeeInfo}
             >
               Save

@@ -57,7 +57,13 @@ class Attendee extends Component {
     return (
       <TableRow>
         <TableCell>{props.attendee.name}</TableCell>
-        <TableCell>{props.attendee.procurementLink}</TableCell>
+        <TableCell>
+          {props.attendee.procurementLink ? (
+            <a href={props.attendee.procurementLink} target="_blank">
+              {props.attendee.procurementLink}
+            </a>
+          ) : null}
+        </TableCell>
         <TableCell className={props.classes.centered}>
           {props.attendee.approved ? (
             <Check
