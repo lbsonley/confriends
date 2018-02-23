@@ -11,12 +11,9 @@ mkdir confriends && cd confriends
 # clone the repo in that directory
 git clone https://github.com/lbsonley/confriends.git .
 
-# install dependencies for server and DB
+# install dependencies
 yarn install
 
-# install dependencies for Create React App
-cd client
-yarn install
 ```
 
 ## Run all the tasks

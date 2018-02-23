@@ -83,7 +83,7 @@ class AddEventForm extends Component {
           country: data.country,
           description: data.description,
         });
-        history.push(`/conferences/${data._id}`); // eslint-disable-line
+        history.push(`/conferences/${data._id}`); // eslint-disable-line no-underscore-dangle
       })
       .catch(err => this.logger('Error fetching attendees:', err));
   };
@@ -119,6 +119,7 @@ class AddEventForm extends Component {
                   id="date"
                   name="date"
                   label="Date"
+                  type="date"
                   className={classes.textField}
                   value={this.state.date}
                   onChange={this.handleTextInputChange}
