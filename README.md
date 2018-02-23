@@ -25,11 +25,8 @@ yarn install
 # start the database
 npm run start:db
 
-# transpile the server
-npm run compile:server
-
-# start the server
-npm run start:server
+# start dev server
+npm run dev-server
 
 # start the react app
 npm run start
