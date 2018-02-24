@@ -8,7 +8,7 @@
 import React, { Component } from 'react';
 
 // react extensions
-import { Router, Route, Redirect, Switch } from 'react-router-dom';
+import { Router, Route, Redirect } from 'react-router-dom';
 
 // utilities
 import bows from 'bows';

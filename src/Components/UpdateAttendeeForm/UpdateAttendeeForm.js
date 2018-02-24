@@ -8,7 +8,6 @@ import TextField from 'material-ui/TextField';
 import { FormControlLabel } from 'material-ui/Form';
 import Switch from 'material-ui/Switch';
 import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
 
 // utils

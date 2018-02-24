@@ -68,7 +68,7 @@ class AddEventForm extends Component {
 
     const textOnlyRe = /[a-zA-Z0-9\s]+$/;
     const anyNonWhiteSpaceChar = /\S+/;
-    const websiteRe = /^https?:\/\/(?:[w]{3}\.)?[a-zA-Z0-9]*(?:\.com|\.org|\.net|\.io|\.ch|\.de)[a-zA-Z0-9\/]*$/;
+    const websiteRe = /^https?:\/\/(?:[w]{3}\.)?[a-zA-Z0-9]*(?:\.com|\.org|\.net|\.io|\.ch|\.de)[a-zA-Z0-9/]*$/;
     const dateRe = /\d{4}-\d{2}-\d{2}/;
 
     return new Promise((resolve, reject) => {

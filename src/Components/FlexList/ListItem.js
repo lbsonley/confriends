@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-import Card, { CardHeader, CardContent } from 'material-ui/Card';
+import Card, { CardContent } from 'material-ui/Card';
 
 import './FlexList.css';
 

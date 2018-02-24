@@ -12,7 +12,6 @@ import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 
 // material ui icons
-import AddIcon from 'material-ui-icons/Add';
 import QueryBuilder from 'material-ui-icons/QueryBuilder';
 
 // my components

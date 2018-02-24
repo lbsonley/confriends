@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 // utilities
 import bows from 'bows';
 import 'whatwg-fetch';
-import classNames from 'classnames';
 
 // material ui components
 import { withStyles } from 'material-ui/styles';
