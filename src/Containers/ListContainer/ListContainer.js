@@ -51,5 +51,6 @@ export default class ListContainer extends Component {
 
 ListContainer.propTypes = {
   getAccessToken: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.func.isRequired,
   listName: PropTypes.string.isRequired,
 };

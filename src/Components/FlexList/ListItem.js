@@ -20,7 +20,7 @@ const styles = theme => ({
   },
 });
 
-const VisualListItem = props => {
+const VisualListItem = ({ classes, listName, item }) => {
   const formatDate = dateString => {
     const dateObj = new Date(dateString);
     const months = [
@@ -48,22 +48,20 @@ const VisualListItem = props => {
   };
 
   return (
-    <Grid item xs={12} className={`flex-list__item ${props.classes.card}`}>
+    <Grid item xs={12} className={`flex-list__item ${classes.card}`}>
       <Link
-        to={`/${props.listName}/${props.item._id}`} // eslint-disable-line no-underscore-dangle
-        href={`/${props.listName}/${props.item._id}`} // eslint-disable-line no-underscore-dangle
+        to={`/${listName}/${item._id}`} // eslint-disable-line no-underscore-dangle
+        href={`/${listName}/${item._id}`} // eslint-disable-line no-underscore-dangle
       >
         <Card>
           <CardContent>
             <Typography variant="headline" gutterBottom>
-              {props.item.name}{' '}
+              {item.name}{' '}
             </Typography>
             <Typography variant="body1">
-              {props.item.city}, {props.item.country}
+              {item.city}, {item.country}
             </Typography>
-            <Typography variant="body1">
-              {formatDate(props.item.date)}
-            </Typography>
+            <Typography variant="body1">{formatDate(item.date)}</Typography>
           </CardContent>
         </Card>
       </Link>
@@ -80,12 +78,10 @@ VisualListItem.propTypes = {
     date: PropTypes.string.isRequired,
     image: PropTypes.string,
   }).isRequired,
+  classes: PropTypes.shape({
+    card: PropTypes.string.isRequired,
+  }).isRequired,
   listName: PropTypes.string.isRequired,
-  optionalClass: PropTypes.string,
-};
-
-VisualListItem.defaultProps = {
-  optionalClass: 'event-teaser',
 };
 
 export default withStyles(styles)(VisualListItem);

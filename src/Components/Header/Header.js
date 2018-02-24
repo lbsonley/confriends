@@ -28,18 +28,18 @@ const Login = ({ onLoginClick }) => (
   </Button>
 );
 
-const styles = theme => ({
+Login.propTypes = {
+  onLoginClick: PropTypes.func.isRequired,
+};
+
+const styles = {
   bigFlex: {
     flex: 1,
   },
-  header: {
-    // height: 80,
-    // marginBottom: theme.spacing.unit * 1.25,
-  },
-});
+};
 
 const Header = ({ isAuthenticated, onLoginClick, onLogoutClick, classes }) => (
-  <AppBar className={classes.header}>
+  <AppBar>
     <Toolbar>
       <NavMain />
       <Typography variant="title" color="inherit" className={classes.bigFlex}>
@@ -58,7 +58,9 @@ Header.propTypes = {
   isAuthenticated: PropTypes.func.isRequired,
   onLoginClick: PropTypes.func.isRequired,
   onLogoutClick: PropTypes.func.isRequired,
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.shape({
+    bigFlex: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default withStyles(styles)(Header);

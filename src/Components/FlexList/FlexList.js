@@ -73,6 +73,10 @@ const styles = theme => ({
 });
 
 FlexList.propTypes = {
+  classes: PropTypes.shape({
+    header: PropTypes.string.isRequired,
+  }).isRequired,
+  isAuthenticated: PropTypes.func.isRequired,
   listName: PropTypes.string.isRequired,
   list: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

@@ -322,14 +322,15 @@ ConferenceDetailsContainer.propTypes = {
       events: PropTypes.array,
     }),
   }).isRequired,
-  getIdToken: PropTypes.func.isRequired,
-  setupUserManagementAPI: PropTypes.func.isRequired,
-  isAuthenticated: PropTypes.func.isRequired,
   classes: PropTypes.shape({
     card: PropTypes.string.isRequired,
     button: PropTypes.string.isRequired,
     gutterBottom: PropTypes.string.isRequired,
+    medium: PropTypes.string.isRequired,
+    big: PropTypes.string.isRequired,
   }).isRequired,
+  isAuthenticated: PropTypes.func.isRequired,
+  onLoginClick: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(ConferenceDetailsContainer);

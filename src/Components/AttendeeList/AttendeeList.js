@@ -31,34 +31,32 @@ const styles = theme => ({
   },
 });
 
-const AttendeeList = props => {
+const AttendeeList = ({ classes, isAuthenticated, attendees }) => {
   this.createListItem = attendee => (
     <Attendee key={attendee.userId} attendee={attendee} />
   );
 
-  // return <ul style={listStyle}>{props.attendees.map(this.createListItem)}</ul>;
-
   return (
     <div>
       <Typography variant="headline">Attendee List</Typography>
-      <Paper className={props.classes.root}>
-        <Table className={props.classes.table}>
+      <Paper className={classes.root}>
+        <Table className={classes.table}>
           <TableHead>
             <TableRow>
               <TableCell>Attendee Name</TableCell>
               <TableCell>Procurement Ticket</TableCell>
-              <TableCell className={props.classes.centered}>Approved</TableCell>
-              {props.isAuthenticated() ? (
-                <TableCell className={props.classes.centered}>Edit</TableCell>
+              <TableCell className={classes.centered}>Approved</TableCell>
+              {isAuthenticated() ? (
+                <TableCell className={classes.centered}>Edit</TableCell>
               ) : null}
-              {props.isAuthenticated() ? (
-                <TableCell className={props.classes.centered}>Delete</TableCell>
+              {isAuthenticated() ? (
+                <TableCell className={classes.centered}>Delete</TableCell>
               ) : null}
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.attendees.length ? (
-              props.attendees.map(this.createListItem)
+            {attendees.length ? (
+              attendees.map(this.createListItem)
             ) : (
               <TableRow>
                 <TableCell>No attendees registered</TableCell>
@@ -73,6 +71,12 @@ const AttendeeList = props => {
 
 AttendeeList.propTypes = {
   attendees: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isAuthenticated: PropTypes.func.isRequired,
+  classes: PropTypes.shape({
+    root: PropTypes.string.isRequired,
+    table: PropTypes.string.isRequired,
+    centered: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 const contextTypes = {

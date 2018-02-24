@@ -6,6 +6,7 @@
 
 // react base
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 // react extensions
 import { Link } from 'react-router-dom';
@@ -52,6 +53,7 @@ class NavMain extends Component {
   };
 
   render() {
+    const { classes } = this.props;
     return (
       <Manager>
         <Target>
@@ -71,8 +73,8 @@ class NavMain extends Component {
           placement="bottom-start"
           eventsEnabled={this.state.navIsExpanded}
           className={classNames({
-            [this.props.classes.popperClose]: !this.state.navIsExpanded,
-            [this.props.classes.popperOpen]: this.state.navIsExpanded,
+            [classes.popperClose]: !this.state.navIsExpanded,
+            [classes.popperOpen]: this.state.navIsExpanded,
           })}
         >
           <ClickAwayListener onClickAway={this.closeMenu}>
@@ -102,5 +104,12 @@ class NavMain extends Component {
     );
   }
 }
+
+NavMain.propTypes = {
+  classes: PropTypes.shape({
+    popperClose: PropTypes.string.isRequired,
+    popperOpen: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 export default withStyles(styles)(NavMain);

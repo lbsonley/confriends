@@ -5,7 +5,9 @@ const getMongoId = (idString, res) => {
   try {
     return ObjectId(idString);
   } catch (error) {
-    res.status(422).json({ message: `Invalid issue ID format: ${error}` });
+    return res
+      .status(422)
+      .json({ message: `Invalid issue ID format: ${error}` });
   }
 };
 

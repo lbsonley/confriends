@@ -3,15 +3,8 @@
  */
 
 import { createMuiTheme } from 'material-ui/styles';
-import blueGrey from 'material-ui/colors/blueGrey';
-import lightBlue from 'material-ui/colors/lightBlue';
 
 const theme = createMuiTheme({
-  // palette: {
-  //   type: 'dark',
-  //   primary: lightBlue,
-  //   secondary: blueGrey,
-  // },
   typography: {
     display1: {
       color: '#3A3A3A',

@@ -53,19 +53,25 @@ class Attendee extends Component {
   };
 
   render() {
-    const { props } = this;
+    const {
+      attendee,
+      classes,
+      isAuthenticated,
+      collectionName,
+      eventId,
+    } = this.props;
     return (
       <TableRow>
-        <TableCell>{props.attendee.name}</TableCell>
+        <TableCell>{attendee.name}</TableCell>
         <TableCell>
-          {props.attendee.procurementLink ? (
-            <a href={props.attendee.procurementLink} target="_blank">
-              {props.attendee.procurementLink}
+          {attendee.procurementLink ? (
+            <a href={attendee.procurementLink} target="_blank">
+              {attendee.procurementLink}
             </a>
           ) : null}
         </TableCell>
-        <TableCell className={props.classes.centered}>
-          {props.attendee.approved ? (
+        <TableCell className={classes.centered}>
+          {attendee.approved ? (
             <Check
               color="error"
               style={{ height: 56, width: 56, fill: 'green' }}
@@ -74,23 +80,21 @@ class Attendee extends Component {
             <Warning style={{ height: 56, width: 56, fill: '#fede3b' }} />
           )}
         </TableCell>
-        {props.isAuthenticated() ? (
-          <TableCell className={props.classes.centered}>
+        {isAuthenticated() ? (
+          <TableCell className={classes.centered}>
             <Button
               variant="fab"
               color="primary"
               aria-label="edit"
               component={Link}
-              to={`/edit/${props.collectionName}/${props.eventId}/${
-                props.attendee.userId
-              }`}
+              to={`/edit/${collectionName}/${eventId}/${attendee.userId}`}
             >
               <ModeEditIcon />
             </Button>
           </TableCell>
         ) : null}
-        {props.isAuthenticated() ? (
-          <TableCell className={props.classes.centered}>
+        {isAuthenticated() ? (
+          <TableCell className={classes.centered}>
             <Button
               variant="fab"
               color="secondary"
@@ -117,7 +121,10 @@ Attendee.propTypes = {
   classes: PropTypes.shape({
     centered: PropTypes.string.isRequired,
   }).isRequired,
+  eventId: PropTypes.string.isRequired,
   collectionName: PropTypes.string.isRequired,
+  removeAttendee: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.func.isRequired,
 };
 
 const contextTypes = {

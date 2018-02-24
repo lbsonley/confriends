@@ -49,7 +49,7 @@ class LoggedIn extends Component {
   };
 
   render() {
-    const { onLogoutClick } = this.props;
+    const { onLogoutClick, classes } = this.props;
 
     return (
       <Manager>
@@ -68,8 +68,8 @@ class LoggedIn extends Component {
           placement="bottom-end"
           eventsEnabled={this.state.userMenuIsExpanded}
           className={classNames({
-            [this.props.classes.popperClose]: !this.state.userMenuIsExpanded,
-            [this.props.classes.popperOpen]: this.state.userMenuIsExpanded,
+            [classes.popperClose]: !this.state.userMenuIsExpanded,
+            [classes.popperOpen]: this.state.userMenuIsExpanded,
           })}
         >
           <ClickAwayListener onClickAway={this.closeMenu}>
@@ -100,6 +100,10 @@ class LoggedIn extends Component {
 
 LoggedIn.propTypes = {
   onLogoutClick: PropTypes.func.isRequired,
+  classes: PropTypes.shape({
+    popperClose: PropTypes.string.isRequired,
+    popperOpen: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default withStyles(styles)(LoggedIn);

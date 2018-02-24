@@ -26,19 +26,15 @@ class UpdateAttendeeForm extends Component {
   // is re-mounted every time the overlay opens
   state = {
     name: '',
-    id: '',
+    userId: '',
     procurementLink: '',
     approved: false,
     invalidFields: {},
-    timer: undefined,
   };
 
   componentDidMount() {
-    fetch(
-      `/api/v1/attendees/${this.props.match.params.id}/${
-        this.props.match.params.userId
-      }`,
-    )
+    const { match } = this.props;
+    fetch(`/api/v1/attendees/${match.params.id}/${match.params.userId}`)
       .then(fetchHelpers.validateResponse)
       .then(fetchHelpers.parseJSON)
       .then(data => {
@@ -72,7 +68,7 @@ class UpdateAttendeeForm extends Component {
     const valid = /^http[s]?:\/\/jira\.unic\.com\/browse\/PROCH-\d+$/.test(
       value,
     );
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       if (!valid) {
         invalidFields[name] = true;
       } else {
@@ -84,43 +80,35 @@ class UpdateAttendeeForm extends Component {
 
   saveAttendeeInfo = e => {
     const { eventId, userId, name, procurementLink, approved } = this.state;
+    const { match } = this.props;
     e.preventDefault();
 
     this.validateUrl('procurementLink', procurementLink).then(invalidFields => {
       this.setState({ invalidFields });
       if (Object.keys(invalidFields).length === 0) {
-        fetch(
-          `/api/v1/attendees/${this.props.match.params.id}/${
-            this.props.match.params.userId
-          }`,
-          {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              eventId,
-              userId,
-              name,
-              procurementLink,
-              approved,
-            }),
-          },
-        )
+        fetch(`/api/v1/attendees/${match.params.id}/${match.params.userId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId,
+            userId,
+            name,
+            procurementLink,
+            approved,
+          }),
+        })
           .then(fetchHelpers.validateResponse)
           .then(fetchHelpers.parseJSON)
           .then(data => {
             this.logger('setting new state with: ', data);
-            this.setState(prevState => ({
+            this.setState({
               eventId: data.eventId,
               userId: data.userId,
               name: data.name,
               procurementLink: data.procurementLink,
               approved: data.approved,
-            }));
-            history.push(
-              `/${this.props.match.params.collectionName}/${
-                this.props.match.params.id
-              }`,
-            );
+            });
+            history.push(`/${match.params.collectionName}/${match.params.id}`);
           })
           .catch(err => this.logger(err));
       }

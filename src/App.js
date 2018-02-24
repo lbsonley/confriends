@@ -18,7 +18,6 @@ import ListContainer from './Containers/ListContainer/ListContainer';
 import ConferenceDetailsContainer from './Containers/ConferenceDetailsContainer/ConferenceDetailsContainer';
 import Profile from './Components/Profile/Profile';
 import Callback from './Auth/Callback';
-import Dummy from './Components/Dummy';
 import Header from './Components/Header/Header';
 import UpdateAttendeeForm from './Components/UpdateAttendeeForm/UpdateAttendeeForm';
 import AddEventForm from './Components/AddEventForm/AddEventForm';
@@ -42,9 +41,9 @@ class App extends Component {
       if (!userProfile) {
         getProfileAsync()
           .then(profile => this.setState({ profile }))
-          .catch(err => console.log(err));
+          .catch(err => this.logger(err));
       } else {
-        console.log('using cached profile:', userProfile);
+        this.logger('using cached profile:', userProfile);
         this.setState({ profile: userProfile });
       }
     } else {
@@ -81,7 +80,7 @@ class App extends Component {
         .then(auth.getProfileAsync)
         .then(profile => this.setState({ profile }))
 
-        .catch(err => console.log(err));
+        .catch(err => this.logger(err));
     }
   };
 
@@ -105,24 +104,6 @@ class App extends Component {
             }}
           />
 
-          {/* logic to determine whether or not to display the dashboard on the homepage */}
-          {/* <Media query="(min-width: 481px)">
-            {matches =>
-              matches ? (
-                <Switch>
-                  <Redirect from="/" exact to="/dummy" />
-                  <Route path="/" render={() => <NavMain />} />
-                </Switch>
-              ) : (
-                <Route exact path="/" render={() => <NavMain />} />
-              )
-            }
-          </Media> */}
-
-          {/* <Switch>
-            <Redirect from="/" exact to="/conferences" />
-          </Switch> */}
-
           <Route
             exact
             path="/"
@@ -134,7 +115,6 @@ class App extends Component {
               />
             )}
           />
-          <Route exact path="/dummy" component={Dummy} />
           {/* <section className="content"> */}
           <Route
             exact
@@ -159,8 +139,6 @@ class App extends Component {
             path="/:collectionName/:id"
             render={props => (
               <ConferenceDetailsContainer
-                getIdToken={auth.getIdToken}
-                setupUserManagementAPI={auth.setupUserManagementAPI}
                 isAuthenticated={auth.isAuthenticated}
                 onLoginClick={this.login}
                 profile={this.state.profile}

@@ -6,6 +6,7 @@
 
 // react core
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 // utitlies
 import bows from 'bows';
@@ -71,7 +72,7 @@ class AddEventForm extends Component {
     const websiteRe = /^https?:\/\/(?:[w]{3}\.)?[a-zA-Z0-9]*(?:\.com|\.org|\.net|\.io|\.ch|\.de)[a-zA-Z0-9/]*$/;
     const dateRe = /\d{4}-\d{2}-\d{2}/;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       switch (name) {
         case 'name':
         case 'city':
@@ -99,7 +100,7 @@ class AddEventForm extends Component {
   };
 
   validateFields = inputs =>
-    new Promise((resolve, reject) => {
+    new Promise(resolve => {
       const promises = Object.keys(inputs).map(input =>
         this.validateField(input, inputs[input]),
       );
@@ -347,5 +348,20 @@ const styles = theme => ({
     width: 200,
   },
 });
+
+AddEventForm.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      collectionName: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  classes: PropTypes.shape({
+    container: PropTypes.string.isRequired,
+    paper: PropTypes.string.isRequired,
+    textField: PropTypes.string.isRequired,
+    menu: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 export default withStyles(styles)(AddEventForm);
