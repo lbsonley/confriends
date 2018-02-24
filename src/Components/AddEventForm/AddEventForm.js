@@ -63,68 +63,6 @@ class AddEventForm extends Component {
 
   logger = bows('AddEventForm');
 
-  saveEvent = e => {
-    e.preventDefault();
-
-    const { name, city, country, date, website, description } = this.state;
-    const inputs = {};
-    const invalidFields = {};
-
-    Object.keys(this.state).forEach(item => {
-      if (item !== 'invalidFields') {
-        inputs[item] = this.state[item];
-      }
-    });
-
-    this.validateFields(inputs)
-      .then(valuesArray =>
-        // convert array of objects into single object
-        valuesArray.reduce((obj, item) => Object.assign({}, obj, item), {}),
-      )
-      .then(obj => {
-        Object.keys(obj).forEach(field => {
-          // if field did not pass validation
-          // add it to the invalid fields obj
-          if (!obj[field]) {
-            invalidFields[field] = true;
-          }
-        });
-        this.setState({ invalidFields });
-        return invalidFields;
-      })
-      .then(invalids => {
-        if (Object.keys(invalids).length === 0) {
-          fetch(`/api/v1/conferences`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name,
-              website,
-              date,
-              city,
-              country,
-              description,
-            }),
-          })
-            .then(fetchHelpers.validateResponse)
-            .then(fetchHelpers.parseJSON)
-            .then(data => {
-              this.logger('setting new state with: ', data);
-              this.setState({
-                name: data.name,
-                website: data.website,
-                date: data.date,
-                city: data.city,
-                country: data.country,
-                description: data.description,
-              });
-              history.push(`/conferences/${data._id}`); // eslint-disable-line no-underscore-dangle
-            })
-            .catch(err => this.logger('Error fetching attendees:', err));
-        }
-      });
-  };
-
   validateField = (name, value) => {
     let valid = false;
 
@@ -190,6 +128,68 @@ class AddEventForm extends Component {
         invalidFields,
       });
     });
+  };
+
+  saveEvent = e => {
+    e.preventDefault();
+
+    const { name, city, country, date, website, description } = this.state;
+    const inputs = {};
+    const invalidFields = {};
+
+    Object.keys(this.state).forEach(item => {
+      if (item !== 'invalidFields') {
+        inputs[item] = this.state[item];
+      }
+    });
+
+    this.validateFields(inputs)
+      .then(valuesArray =>
+        // convert array of objects into single object
+        valuesArray.reduce((obj, item) => Object.assign({}, obj, item), {}),
+      )
+      .then(obj => {
+        Object.keys(obj).forEach(field => {
+          // if field did not pass validation
+          // add it to the invalid fields obj
+          if (!obj[field]) {
+            invalidFields[field] = true;
+          }
+        });
+        this.setState({ invalidFields });
+        return invalidFields;
+      })
+      .then(invalids => {
+        if (Object.keys(invalids).length === 0) {
+          fetch(`/api/v1/conferences`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name,
+              website,
+              date,
+              city,
+              country,
+              description,
+            }),
+          })
+            .then(fetchHelpers.validateResponse)
+            .then(fetchHelpers.parseJSON)
+            .then(data => {
+              this.logger('setting new state with: ', data);
+              this.setState({
+                name: data.name,
+                website: data.website,
+                date: data.date,
+                city: data.city,
+                country: data.country,
+                description: data.description,
+              });
+              history.push(`/conferences/${data._id}`); // eslint-disable-line no-underscore-dangle
+            })
+            .catch(err => this.logger('Error fetching attendees:', err));
+        }
+      });
   };
 
   render() {
