@@ -17,6 +17,7 @@ import bows from 'bows';
 
 // my components
 import PageHeader from '../../Molecules/PageHeader';
+import LinkButton from '../Button/LinkButton';
 
 import history from '../../Assets/js/utils/history';
 import fetchHelpers from '../../Assets/js/utils/fetchHelpers';
@@ -128,7 +129,7 @@ class UpdateAttendeeForm extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, match } = this.props;
 
     return (
       <div>
@@ -169,7 +170,6 @@ class UpdateAttendeeForm extends Component {
               label="Approved"
             />
             <Button
-              disabled={Object.keys(this.state.invalidFields).length !== 0}
               variant="raised"
               color="primary"
               type="submit"
@@ -177,6 +177,12 @@ class UpdateAttendeeForm extends Component {
             >
               Save
             </Button>
+            <LinkButton
+              href={`/conferences/${match.params.id}`}
+              inlineStyles={{ marginLeft: 20 }}
+            >
+              Cancel
+            </LinkButton>
           </form>
         </Paper>
       </div>
@@ -210,6 +216,11 @@ const styles = theme => ({
 UpdateAttendeeForm.propTypes = {
   classes: PropTypes.shape({
     textField: PropTypes.string.isRequired,
+  }).isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+    }).isRequired,
   }).isRequired,
 };
 

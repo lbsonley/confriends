@@ -21,12 +21,10 @@ import DateRange from 'material-ui-icons/DateRange';
 import Hotel from 'material-ui-icons/Hotel';
 
 // utilities
-import bows from 'bows';
-import 'whatwg-fetch';
 import classNames from 'classnames';
 
 // my components
-import PageHeader from '../../Molecules/PageHeader';
+import LinkButton from '../../Components/Button/LinkButton';
 
 const Home = ({ classes, onLoginClick, isAuthenticated }) => {
   const textClasses = classNames({
@@ -78,14 +76,12 @@ const Home = ({ classes, onLoginClick, isAuthenticated }) => {
                   Login to get started
                 </Button>
                 or
-                <Button
-                  color="primary"
+                <LinkButton
                   href="/conferences"
-                  className={classes.link}
-                  style={{ marginLeft: 32 }}
+                  inlineStyles={{ marginLeft: 28 }}
                 >
                   View the upcoming events
-                </Button>
+                </LinkButton>
               </div>
             )}
           </Grid>
@@ -151,6 +147,20 @@ const Home = ({ classes, onLoginClick, isAuthenticated }) => {
   );
 };
 
+Home.propTypes = {
+  classes: PropTypes.shape({
+    bigIcon: PropTypes.string.isRequired,
+    regularIcon: PropTypes.string.isRequired,
+    responsiveAlign: PropTypes.string.isRequired,
+    sidePad: PropTypes.string.isRequired,
+    newSection: PropTypes.string.isRequired,
+    firstSection: PropTypes.string.isRequired,
+    bigButton: PropTypes.string.isRequired,
+  }).isRequired,
+  onLoginClick: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.func.isRequired,
+};
+
 const styles = theme => ({
   bigIcon: {
     fill: '#3a3a3a',
@@ -193,11 +203,6 @@ const styles = theme => ({
   },
   bigButton: {
     padding: 24,
-  },
-  link: {
-    marginTop: 0,
-    paddingLeft: 0,
-    textTransform: 'lowercase',
   },
 });
 

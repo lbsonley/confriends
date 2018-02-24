@@ -12,13 +12,12 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
-import Paper from 'material-ui/Paper';
-import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 // my components
 import { Provider } from '../Provider/Provider';
 import AttendeeList from '../../Components/AttendeeList/AttendeeList';
 import PageHeader from '../../Molecules/PageHeader';
+import LinkButton from '../../Components/Button/LinkButton';
 
 import logic from '../../Assets/js/utils/logicHelpers';
 import fetchHelpers from '../../Assets/js/utils/fetchHelpers';
@@ -195,14 +194,13 @@ class ConferenceDetailsContainer extends Component {
                 {this.state.event.city}, {this.state.event.country}
               </Typography>
               <Typography variant="body1">{this.state.event.date}</Typography>
-              <Button
-                color="primary"
+              <LinkButton
                 href={this.state.event.website}
                 target="_blank"
-                className={this.props.classes.link}
+                inlineStyles={{ textTransform: 'lowercase' }}
               >
                 {this.state.event.website}
-              </Button>
+              </LinkButton>
             </Grid>
             {this.state.event.description ? (
               <Grid item xs={12}>
@@ -309,11 +307,6 @@ const styles = theme => ({
     marginBottom: 16,
     padding: 16,
   },
-  link: {
-    marginTop: 0,
-    paddingLeft: 0,
-    textTransform: 'lowercase',
-  },
 });
 
 ConferenceDetailsContainer.propTypes = {
@@ -337,7 +330,6 @@ ConferenceDetailsContainer.propTypes = {
     card: PropTypes.string.isRequired,
     button: PropTypes.string.isRequired,
     gutterBottom: PropTypes.string.isRequired,
-    link: PropTypes.string.isRequired,
   }).isRequired,
 };
 
