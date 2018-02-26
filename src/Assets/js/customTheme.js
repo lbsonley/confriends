@@ -3,8 +3,25 @@
  */
 
 import { createMuiTheme } from 'material-ui/styles';
+import lightBlue from 'material-ui/colors/lightBlue';
+import orange from 'material-ui/colors/orange';
+import yellow from 'material-ui/colors/yellow';
 
 const theme = createMuiTheme({
+  palette: {
+    type: 'light',
+    primary: {
+      main: lightBlue[800],
+    },
+    secondary: {
+      main: yellow[700],
+      contrastText: '#000',
+    },
+    error: {
+      main: orange[500],
+    },
+    tonalOffset: 0.2,
+  },
   typography: {
     display1: {
       color: '#3A3A3A',

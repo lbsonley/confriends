@@ -255,16 +255,7 @@ class ConferenceDetailsContainer extends Component {
           </section>
           {this.props.isAuthenticated() ? (
             <Grid container style={{ marginTop: 80 }}>
-              <Grid
-                item
-                xs={12}
-                style={{
-                  borderWidth: 2,
-                  borderColor: '#F2453D',
-                  borderStyle: 'solid',
-                  marginBottom: 16,
-                }}
-              >
+              <Grid item xs={12} className={this.props.classes.bordered}>
                 <Typography variant="headline" color="error">
                   Danger Zone
                 </Typography>
@@ -306,6 +297,12 @@ const styles = theme => ({
     marginBottom: 16,
     padding: 16,
   },
+  bordered: {
+    borderWidth: 2,
+    borderColor: theme.palette.error.main,
+    borderStyle: 'solid',
+    marginBottom: 16,
+  },
 });
 
 ConferenceDetailsContainer.propTypes = {
@@ -328,6 +325,7 @@ ConferenceDetailsContainer.propTypes = {
     gutterBottom: PropTypes.string.isRequired,
     medium: PropTypes.string.isRequired,
     big: PropTypes.string.isRequired,
+    bordered: PropTypes.string.isRequired,
   }).isRequired,
   isAuthenticated: PropTypes.func.isRequired,
   onLoginClick: PropTypes.func.isRequired,

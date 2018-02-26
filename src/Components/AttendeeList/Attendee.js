@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 // utilities
 import bows from 'bows';
+import classNames from 'classnames';
 
 // material ui components
 import { withStyles } from 'material-ui/styles';
@@ -14,7 +15,7 @@ import Button from 'material-ui/Button';
 // material ui icons
 import ModeEditIcon from 'material-ui-icons/ModeEdit';
 import DeleteIcon from 'material-ui-icons/Delete';
-import Warning from 'material-ui-icons/Warning';
+import NotInterested from 'material-ui-icons/NotInterested';
 import Check from 'material-ui-icons/Check';
 
 // utils
@@ -23,11 +24,22 @@ import fetchHelpers from '../../Assets/js/utils/fetchHelpers';
 // my components
 import { withContext } from '../../Containers/Provider/Provider';
 
-const styles = {
+const styles = theme => ({
   centered: {
     textAlign: 'center',
   },
-};
+  statusIcon: {
+    height: 64,
+    width: 64,
+    verticalAlign: 'middle',
+  },
+  unapproved: {
+    color: theme.palette.secondary.main,
+  },
+  approved: {
+    color: theme.palette.primary.main,
+  },
+});
 
 class Attendee extends Component {
   logger = bows('Attendee');
@@ -73,11 +85,18 @@ class Attendee extends Component {
         <TableCell className={classes.centered}>
           {attendee.approved ? (
             <Check
-              color="error"
-              style={{ height: 56, width: 56, fill: 'green' }}
+              className={classNames({
+                [classes.statusIcon]: true,
+                [classes.approved]: true,
+              })}
             />
           ) : (
-            <Warning style={{ height: 56, width: 56, fill: '#fede3b' }} />
+            <NotInterested
+              className={classNames({
+                [classes.statusIcon]: true,
+                [classes.unapproved]: true,
+              })}
+            />
           )}
         </TableCell>
         {isAuthenticated() ? (
@@ -120,6 +139,7 @@ Attendee.propTypes = {
   }).isRequired,
   classes: PropTypes.shape({
     centered: PropTypes.string.isRequired,
+    statusIcon: PropTypes.string.isRequired,
   }).isRequired,
   eventId: PropTypes.string.isRequired,
   collectionName: PropTypes.string.isRequired,
